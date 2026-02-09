@@ -4,11 +4,12 @@ import Navbar from './components/Navbar';
 import LiveVoice from './components/LiveVoice';
 import Logo from './components/Logo';
 import { SERVICES, TEMPLATES, PRICING_PLANS } from './constants';
-import { ServiceCategory, PricingPlan } from './types';
+import { ServiceCategory, PricingPlan, Template } from './types';
 
 const App: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState<ServiceCategory | 'all'>('all');
   const [selectedPlan, setSelectedPlan] = useState<PricingPlan | null>(null);
+  const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
   
   const [formData, setFormData] = useState({
     name: '',
@@ -18,6 +19,12 @@ const App: React.FC = () => {
   });
 
   const [orderFormData, setOrderFormData] = useState({
+    name: '',
+    email: '',
+    message: ''
+  });
+
+  const [templateOrderFormData, setTemplateOrderFormData] = useState({
     name: '',
     email: '',
     message: ''
@@ -35,6 +42,11 @@ const App: React.FC = () => {
   const handleOrderInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setOrderFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleTemplateOrderInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setTemplateOrderFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const WHATSAPP_NUMBER = "243850062491";
@@ -61,7 +73,23 @@ const App: React.FC = () => {
                  `*Détails du projet:* ${orderFormData.message}`;
     
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${text}`, '_blank');
-    setSelectedPlan(null); // Close modal
+    setSelectedPlan(null);
+  };
+
+  const handleTemplateOrderSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedTemplate) return;
+
+    const text = `*ACHAT DE TEMPLATE WANZCORP*%0A%0A` +
+                 `*Template:* ${selectedTemplate.title}%0A` +
+                 `*Catégorie:* ${selectedTemplate.category}%0A` +
+                 `*Prix:* ${selectedTemplate.price}$%0A%0A` +
+                 `*Client:* ${templateOrderFormData.name}%0A` +
+                 `*Email:* ${templateOrderFormData.email}%0A` +
+                 `*Demande:* ${templateOrderFormData.message}`;
+    
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${text}`, '_blank');
+    setSelectedTemplate(null);
   };
 
   return (
@@ -173,7 +201,10 @@ const App: React.FC = () => {
                   <p className="text-gray-400 text-sm mb-6">{t.description}</p>
                   <div className="flex items-center justify-between">
                     <span className="text-2xl font-black text-white">${t.price}</span>
-                    <button className="px-4 py-2 bg-brand-purple/20 text-brand-purple font-bold text-sm rounded-lg hover:bg-brand-purple hover:text-white transition-colors">
+                    <button 
+                      onClick={() => setSelectedTemplate(t)}
+                      className="px-4 py-2 bg-brand-purple/20 text-brand-purple font-bold text-sm rounded-lg hover:bg-brand-purple hover:text-white transition-colors"
+                    >
                       Acheter
                     </button>
                   </div>
@@ -223,69 +254,55 @@ const App: React.FC = () => {
         </div>
       </section>
 
-      {/* Order Modal Form */}
+      {/* Pricing Order Modal */}
       {selectedPlan && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-brand-dark/80 backdrop-blur-md" onClick={() => setSelectedPlan(null)}></div>
           <div className="glass w-full max-w-lg p-8 rounded-[2.5rem] border border-white/20 relative animate-float shadow-2xl">
-            <button 
-              onClick={() => setSelectedPlan(null)}
-              className="absolute top-6 right-6 text-gray-400 hover:text-white"
-            >
+            <button onClick={() => setSelectedPlan(null)} className="absolute top-6 right-6 text-gray-400 hover:text-white">
               <i className="fas fa-times text-xl"></i>
             </button>
-            
             <div className="mb-8">
               <div className="text-brand-accent text-xs font-bold uppercase tracking-widest mb-2">Finalisez votre commande</div>
               <h3 className="text-3xl font-black text-white">Pack {selectedPlan.name}</h3>
               <div className="text-brand-accent text-xl font-bold">{selectedPlan.price}</div>
             </div>
-
             <form onSubmit={handleOrderSubmit} className="space-y-5">
-              <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase mb-2 ml-1">Nom Complet</label>
-                <input 
-                  type="text" 
-                  name="name"
-                  required
-                  value={orderFormData.name}
-                  onChange={handleOrderInputChange}
-                  placeholder="Votre nom"
-                  className="w-full bg-brand-dark/50 border border-white/10 rounded-xl px-5 py-4 text-white focus:outline-none focus:border-brand-accent transition-all"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase mb-2 ml-1">Email professionnel</label>
-                <input 
-                  type="email" 
-                  name="email"
-                  required
-                  value={orderFormData.email}
-                  onChange={handleOrderInputChange}
-                  placeholder="email@compagnie.com"
-                  className="w-full bg-brand-dark/50 border border-white/10 rounded-xl px-5 py-4 text-white focus:outline-none focus:border-brand-accent transition-all"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase mb-2 ml-1">Description du Projet</label>
-                <textarea 
-                  name="message"
-                  required
-                  rows={3}
-                  value={orderFormData.message}
-                  onChange={handleOrderInputChange}
-                  placeholder="Dites-nous en plus sur vos besoins..."
-                  className="w-full bg-brand-dark/50 border border-white/10 rounded-xl px-5 py-4 text-white focus:outline-none focus:border-brand-accent transition-all"
-                ></textarea>
-              </div>
-              
-              <button 
-                type="submit" 
-                className="w-full py-5 bg-gradient-to-r from-brand-accent to-brand-purple text-brand-dark font-black text-lg rounded-2xl shadow-xl hover:opacity-90 transform active:scale-95 transition-all"
-              >
+              <input type="text" name="name" required value={orderFormData.name} onChange={handleOrderInputChange} placeholder="Nom Complet" className="w-full bg-brand-dark/50 border border-white/10 rounded-xl px-5 py-4 text-white focus:outline-none focus:border-brand-accent" />
+              <input type="email" name="email" required value={orderFormData.email} onChange={handleOrderInputChange} placeholder="Email professionnel" className="w-full bg-brand-dark/50 border border-white/10 rounded-xl px-5 py-4 text-white focus:outline-none focus:border-brand-accent" />
+              <textarea name="message" required rows={3} value={orderFormData.message} onChange={handleOrderInputChange} placeholder="Description du Projet..." className="w-full bg-brand-dark/50 border border-white/10 rounded-xl px-5 py-4 text-white focus:outline-none focus:border-brand-accent"></textarea>
+              <button type="submit" className="w-full py-5 bg-gradient-to-r from-brand-accent to-brand-purple text-brand-dark font-black text-lg rounded-2xl shadow-xl hover:opacity-90 transition-all">
                 <i className="fab fa-whatsapp mr-2 text-xl"></i> Confirmer sur WhatsApp
               </button>
-              <p className="text-[10px] text-center text-gray-500">En cliquant, vous serez redirigé vers notre ligne WhatsApp directe.</p>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Template Purchase Modal */}
+      {selectedTemplate && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-brand-dark/80 backdrop-blur-md" onClick={() => setSelectedTemplate(null)}></div>
+          <div className="glass w-full max-w-lg p-8 rounded-[2.5rem] border border-brand-purple/30 relative animate-float shadow-2xl">
+            <button onClick={() => setSelectedTemplate(null)} className="absolute top-6 right-6 text-gray-400 hover:text-white">
+              <i className="fas fa-times text-xl"></i>
+            </button>
+            <div className="mb-8">
+              <div className="text-brand-purple text-xs font-bold uppercase tracking-widest mb-2">Achat de Template</div>
+              <h3 className="text-3xl font-black text-white">{selectedTemplate.title}</h3>
+              <div className="flex items-center space-x-3 mt-1">
+                <span className="text-gray-400 text-sm">{selectedTemplate.category}</span>
+                <span className="text-brand-purple text-xl font-bold">${selectedTemplate.price}</span>
+              </div>
+            </div>
+            <form onSubmit={handleTemplateOrderSubmit} className="space-y-5">
+              <input type="text" name="name" required value={templateOrderFormData.name} onChange={handleTemplateOrderInputChange} placeholder="Votre Nom" className="w-full bg-brand-dark/50 border border-white/10 rounded-xl px-5 py-4 text-white focus:outline-none focus:border-brand-purple" />
+              <input type="email" name="email" required value={templateOrderFormData.email} onChange={handleTemplateOrderInputChange} placeholder="Votre Email" className="w-full bg-brand-dark/50 border border-white/10 rounded-xl px-5 py-4 text-white focus:outline-none focus:border-brand-purple" />
+              <textarea name="message" required rows={3} value={templateOrderFormData.message} onChange={handleTemplateOrderInputChange} placeholder="Informations complémentaires ou personnalisation..." className="w-full bg-brand-dark/50 border border-white/10 rounded-xl px-5 py-4 text-white focus:outline-none focus:border-brand-purple"></textarea>
+              <button type="submit" className="w-full py-5 bg-gradient-to-r from-brand-purple to-brand-dark text-white font-black text-lg rounded-2xl shadow-xl hover:opacity-90 border border-brand-purple/50 transition-all">
+                <i className="fab fa-whatsapp mr-2 text-xl"></i> Commander sur WhatsApp
+              </button>
+              <p className="text-[10px] text-center text-gray-500 italic">Un expert WANZCORP vous répondra instantanément pour finaliser l'installation.</p>
             </form>
           </div>
         </div>
@@ -333,31 +350,10 @@ const App: React.FC = () => {
 
                 <form className="space-y-6" onSubmit={handleWhatsAppSubmit}>
                   <div className="grid md:grid-cols-2 gap-6">
-                    <input 
-                      type="text" 
-                      name="name"
-                      required
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      placeholder="Nom complet" 
-                      className="w-full bg-brand-dark/50 border border-white/10 rounded-xl px-6 py-4 text-white focus:outline-none focus:border-brand-accent" 
-                    />
-                    <input 
-                      type="email" 
-                      name="email"
-                      required
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      placeholder="Email" 
-                      className="w-full bg-brand-dark/50 border border-white/10 rounded-xl px-6 py-4 text-white focus:outline-none focus:border-brand-accent" 
-                    />
+                    <input type="text" name="name" required value={formData.name} onChange={handleInputChange} placeholder="Nom complet" className="w-full bg-brand-dark/50 border border-white/10 rounded-xl px-6 py-4 text-white focus:outline-none focus:border-brand-accent" />
+                    <input type="email" name="email" required value={formData.email} onChange={handleInputChange} placeholder="Email" className="w-full bg-brand-dark/50 border border-white/10 rounded-xl px-6 py-4 text-white focus:outline-none focus:border-brand-accent" />
                   </div>
-                  <select 
-                    name="service"
-                    value={formData.service}
-                    onChange={handleInputChange}
-                    className="w-full bg-brand-dark/50 border border-white/10 rounded-xl px-6 py-4 text-white focus:outline-none focus:border-brand-accent"
-                  >
+                  <select name="service" value={formData.service} onChange={handleInputChange} className="w-full bg-brand-dark/50 border border-white/10 rounded-xl px-6 py-4 text-white focus:outline-none focus:border-brand-accent">
                     <option value="">Sélectionnez un service</option>
                     <option value="Développement Web">Développement Web</option>
                     <option value="Application Mobile">Application Mobile</option>
@@ -365,15 +361,7 @@ const App: React.FC = () => {
                     <option value="Intelligence Artificielle">Intelligence Artificielle</option>
                     <option value="Design UI/UX">Design UI/UX</option>
                   </select>
-                  <textarea 
-                    name="message"
-                    required
-                    rows={4} 
-                    value={formData.message}
-                    onChange={handleInputChange}
-                    placeholder="Décrivez votre projet..." 
-                    className="w-full bg-brand-dark/50 border border-white/10 rounded-xl px-6 py-4 text-white focus:outline-none focus:border-brand-accent"
-                  ></textarea>
+                  <textarea name="message" required rows={4} value={formData.message} onChange={handleInputChange} placeholder="Décrivez votre projet..." className="w-full bg-brand-dark/50 border border-white/10 rounded-xl px-6 py-4 text-white focus:outline-none focus:border-brand-accent"></textarea>
                   <button type="submit" className="w-full py-4 bg-gradient-to-r from-brand-accent to-brand-purple text-brand-dark font-black text-lg rounded-xl shadow-xl hover:opacity-90 transition-all active:scale-[0.98]">
                     <i className="fab fa-whatsapp mr-2"></i> Envoyer sur WhatsApp
                   </button>
@@ -403,7 +391,6 @@ const App: React.FC = () => {
         </div>
       </footer>
 
-      {/* Floating Elements */}
       <LiveVoice />
     </div>
   );
