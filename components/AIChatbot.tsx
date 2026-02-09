@@ -5,7 +5,7 @@ import { ChatMessage, GroundingSource } from '../types';
 
 const AIChatbot: React.FC = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([
-    { role: 'model', text: 'Bonjour ! Je suis l\'assistant IA de WANZCORP. Comment puis-je vous aider dans votre transformation digitale aujourd\'hui ?', timestamp: Date.now() }
+    { role: 'model', text: 'Bonjour ! Je suis l\'assistant automatisé de WANZCORP. Comment puis-je vous aider dans votre transformation digitale aujourd\'hui ?', timestamp: Date.now() }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -46,14 +46,14 @@ const AIChatbot: React.FC = () => {
     const reader = new FileReader();
     reader.onload = async () => {
       const base64 = reader.result as string;
-      setMessages(prev => [...prev, { role: 'user', text: "Analyse de l'image envoyée...", timestamp: Date.now() }]);
+      setMessages(prev => [...prev, { role: 'user', text: "Analyse automatisée de l'image envoyée...", timestamp: Date.now() }]);
       setIsLoading(true);
       
       try {
         const analysis = await analyzeImage(base64, "Peux-tu analyser cette image et me dire comment WANZCORP pourrait aider à améliorer ce design ou cette interface ?");
         setMessages(prev => [...prev, { role: 'model', text: analysis || "Analyse terminée.", timestamp: Date.now() }]);
       } catch (err) {
-        setMessages(prev => [...prev, { role: 'model', text: "Erreur lors de l'analyse de l'image.", timestamp: Date.now() }]);
+        setMessages(prev => [...prev, { role: 'model', text: "Erreur lors de l'analyse automatisée de l'image.", timestamp: Date.now() }]);
       } finally {
         setIsLoading(false);
       }
@@ -65,7 +65,7 @@ const AIChatbot: React.FC = () => {
     <div id="ai-hub" className="py-20 relative">
       <div className="max-w-4xl mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-extrabold text-white mb-4">AI Consultant <span className="gradient-text">WANZCORP</span></h2>
+          <h2 className="text-4xl font-extrabold text-white mb-4">Consultant <span className="gradient-text">Automatisé</span></h2>
           <p className="text-gray-400">Posez vos questions techniques, analysez vos designs ou demandez des conseils stratégiques.</p>
         </div>
 
@@ -74,7 +74,7 @@ const AIChatbot: React.FC = () => {
           <div className="p-4 border-b border-white/10 bg-white/5 flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-              <span className="font-semibold text-white">Gemini 3 Pro Active</span>
+              <span className="font-semibold text-white">Système Automatisé Actif</span>
             </div>
             <div className="flex space-x-2">
                <button 

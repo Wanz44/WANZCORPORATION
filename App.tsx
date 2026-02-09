@@ -93,88 +93,85 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen selection:bg-brand-accent selection:text-brand-dark">
       <Navbar />
       
       {/* Hero Section */}
       <section id="home" className="relative pt-48 pb-20 overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-full -z-10">
-          <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-brand-accent/20 blur-[120px] rounded-full"></div>
-          <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-brand-purple/20 blur-[120px] rounded-full"></div>
+          <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-brand-accent/20 blur-[150px] rounded-full animate-pulse-slow"></div>
+          <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-brand-purple/20 blur-[150px] rounded-full animate-pulse-slow delay-1000"></div>
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <div className="inline-block px-4 py-1.5 mb-6 rounded-full glass border border-white/20 text-brand-accent text-sm font-bold tracking-widest uppercase">
+        <div className="max-w-7xl mx-auto px-4 text-center animate-reveal-up">
+          <div className="inline-block px-4 py-1.5 mb-8 rounded-full glass border border-white/20 text-brand-accent text-xs font-bold tracking-widest uppercase animate-fade-in">
             L'excellence Digitale par WANZCORP
           </div>
-          <h1 className="text-6xl md:text-8xl font-black mb-6 tracking-tight text-white">
-            Transformez Vos Idées en <br />
-            <span className="gradient-text">Réalité Digitale</span>
+          <h1 className="text-6xl md:text-9xl font-black mb-8 tracking-tighter text-white leading-[0.9] perspective-1000">
+            Créez le Futur <br />
+            <span className="gradient-text">Sans Limite</span>
           </h1>
-          <p className="max-w-2xl mx-auto text-gray-400 text-lg md:text-xl mb-10">
-            Nous concevons des écosystèmes logiciels complets : Web, Mobile, Desktop et IA. 
-            L'ingénierie au service de votre croissance.
+          <p className="max-w-2xl mx-auto text-gray-400 text-lg md:text-xl mb-12 leading-relaxed opacity-0 animate-fade-in [animation-delay:400ms] [animation-fill-mode:forwards]">
+            WANZCORP fusionne l'ingénierie logicielle de pointe et l'automatisation avancée pour propulser vos ambitions vers de nouveaux sommets.
           </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <a href="#contact" className="px-8 py-4 bg-brand-accent text-brand-dark font-bold rounded-xl hover:bg-brand-accent/90 transition-all transform hover:-translate-y-1 shadow-lg shadow-brand-accent/20">
-              <i className="fas fa-paper-plane mr-2"></i> Demander un devis
+          <div className="flex flex-wrap justify-center gap-6 opacity-0 animate-reveal-up [animation-delay:600ms] [animation-fill-mode:forwards]">
+            <a href="#contact" className="group px-10 py-5 bg-brand-accent text-brand-dark font-black rounded-2xl hover:bg-white transition-all transform hover:-translate-y-2 hover:shadow-[0_20px_40px_-15px_rgba(0,210,255,0.4)] active:scale-95">
+              <i className="fas fa-rocket mr-2 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1"></i> Démarrer un projet
             </a>
           </div>
           
-          <div className="mt-20 relative max-w-5xl mx-auto">
-             <div className="glass rounded-3xl p-2 border border-white/10 shadow-2xl transform rotate-1">
-                <img src="https://picsum.photos/1200/600?grayscale" alt="Dashboard" className="rounded-2xl opacity-50 grayscale hover:grayscale-0 transition-all duration-700" />
+          <div className="mt-24 relative max-w-5xl mx-auto opacity-0 animate-reveal-up [animation-delay:800ms] [animation-fill-mode:forwards]">
+             <div className="glass rounded-[3rem] p-3 border border-white/10 shadow-2xl transform hover:rotate-0 transition-transform duration-1000 ease-expo-out rotate-2">
+                <img src="https://picsum.photos/1200/600?grayscale" alt="Dashboard" className="rounded-[2.5rem] opacity-40 grayscale hover:grayscale-0 transition-all duration-1000" />
              </div>
-             <div className="absolute -bottom-10 -left-10 w-48 h-48 glass rounded-2xl p-6 border border-white/10 hidden md:block animate-float">
-                <i className="fas fa-code text-brand-accent text-4xl mb-4"></i>
-                <div className="text-sm font-bold">Code Qualité</div>
-                <div className="text-xs text-gray-400">Standard Entreprise</div>
+             <div className="absolute -bottom-12 -left-12 w-56 h-56 glass rounded-[2.5rem] p-8 border border-white/10 hidden md:flex flex-col justify-center animate-float shadow-2xl">
+                <i className="fas fa-terminal text-brand-accent text-5xl mb-4"></i>
+                <div className="text-sm font-extrabold text-white">Ingénierie Pure</div>
+                <div className="text-[10px] text-gray-500 uppercase tracking-widest mt-1">Standard WANZCORP</div>
              </div>
           </div>
         </div>
       </section>
 
       {/* Services Section */}
-      <section id="services" className="py-24 bg-white/5">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <div className="mb-16">
-            <h2 className="text-4xl font-extrabold text-white mb-4">Nos Solutions <span className="text-brand-accent">360°</span></h2>
-            <p className="text-gray-400 max-w-2xl mx-auto">Des services d'ingénierie logicielle de pointe pour tous vos besoins.</p>
+      <section id="services" className="py-32 bg-white/[0.02]">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-20 animate-fade-in">
+            <h2 className="text-5xl font-black text-white mb-6">Solutions <span className="text-brand-accent">Haut de Gamme</span></h2>
+            <p className="text-gray-400 max-w-2xl mx-auto text-lg leading-relaxed">Chaque ligne de code est optimisée pour la performance et l'évolutivité de votre business.</p>
           </div>
 
-          <div className="flex flex-wrap justify-center gap-2 mb-12">
-            <button 
-              onClick={() => setActiveCategory('all')}
-              className={`px-6 py-2 rounded-full text-sm font-bold transition-all ${activeCategory === 'all' ? 'bg-brand-accent text-brand-dark' : 'glass border border-white/10 text-gray-400'}`}
-            >
-              Tous
-            </button>
-            {Object.values(ServiceCategory).map(cat => (
+          <div className="flex flex-wrap justify-center gap-3 mb-16">
+            {['all', ...Object.values(ServiceCategory)].map(cat => (
               <button 
                 key={cat}
-                onClick={() => setActiveCategory(cat)}
-                className={`px-6 py-2 rounded-full text-sm font-bold capitalize transition-all ${activeCategory === cat ? 'bg-brand-accent text-brand-dark' : 'glass border border-white/10 text-gray-400'}`}
+                onClick={() => setActiveCategory(cat as any)}
+                className={`px-8 py-3 rounded-full text-xs font-black uppercase tracking-widest transition-all duration-500 transform active:scale-90 ${activeCategory === cat ? 'bg-brand-accent text-brand-dark shadow-lg shadow-brand-accent/20' : 'glass border border-white/5 text-gray-500 hover:text-white hover:bg-white/5'}`}
               >
-                {cat}
+                {cat === 'all' ? 'Tout Voir' : cat}
               </button>
             ))}
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredServices.map(service => (
-              <div key={service.id} className="glass p-8 rounded-3xl text-left border border-white/10 group hover:border-brand-accent/50 transition-all duration-300">
-                <div className="w-14 h-14 bg-brand-accent/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                  <i className={`fas ${service.icon} text-2xl text-brand-accent`}></i>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+            {filteredServices.map((service, idx) => (
+              <div 
+                key={service.id} 
+                className="glass p-10 rounded-[2.5rem] text-left border border-white/10 group hover:-translate-y-4 hover:shadow-[0_40px_80px_-30px_rgba(0,0,0,0.5)] transition-all duration-700 ease-expo-out opacity-0 animate-reveal-up"
+                style={{ animationDelay: `${idx * 100}ms`, animationFillMode: 'forwards' }}
+              >
+                <div className="w-16 h-16 bg-brand-accent/10 rounded-2xl flex items-center justify-center mb-8 group-hover:rotate-[15deg] group-hover:scale-110 transition-all duration-500">
+                  <i className={`fas ${service.icon} text-3xl text-brand-accent`}></i>
                 </div>
-                <h3 className="text-xl font-bold text-white mb-3">{service.title}</h3>
-                <p className="text-gray-400 text-sm mb-6 leading-relaxed">{service.description}</p>
-                <ul className="space-y-2">
+                <h3 className="text-2xl font-black text-white mb-4 group-hover:text-brand-accent transition-colors">{service.title}</h3>
+                <p className="text-gray-400 text-sm mb-8 leading-relaxed line-clamp-3">{service.description}</p>
+                <div className="space-y-3">
                   {service.features.map((f, i) => (
-                    <li key={i} className="flex items-center text-xs text-gray-300">
-                      <i className="fas fa-check-circle text-brand-accent mr-2"></i> {f}
-                    </li>
+                    <div key={i} className="flex items-center text-xs text-gray-300 transform group-hover:translate-x-1 transition-transform" style={{ transitionDelay: `${i * 50}ms` }}>
+                      <div className="w-1.5 h-1.5 rounded-full bg-brand-accent mr-3"></div> {f}
+                    </div>
                   ))}
-                </ul>
+                </div>
               </div>
             ))}
           </div>
@@ -182,28 +179,33 @@ const App: React.FC = () => {
       </section>
 
       {/* Templates Section */}
-      <section id="templates" className="py-24">
+      <section id="templates" className="py-32">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-extrabold text-white mb-4">Boutique de <span className="gradient-text">Templates</span></h2>
-            <p className="text-gray-400">Gagnez du temps avec nos solutions pré-conçues et optimisées.</p>
+          <div className="text-center mb-20">
+            <h2 className="text-5xl font-black text-white mb-6">Boutique <span className="gradient-text">Signature</span></h2>
+            <p className="text-gray-400 text-lg">Des composants et architectures prêts pour la production.</p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {TEMPLATES.map(t => (
-              <div key={t.id} className="glass rounded-3xl overflow-hidden border border-white/10 group hover:border-brand-purple transition-all">
-                <div className="h-48 bg-gradient-to-br from-brand-surface to-brand-dark flex items-center justify-center overflow-hidden">
-                   <i className={`fas ${t.icon} text-6xl text-brand-purple group-hover:scale-125 transition-transform duration-500`}></i>
+          <div className="grid md:grid-cols-3 gap-10">
+            {TEMPLATES.map((t, idx) => (
+              <div 
+                key={t.id} 
+                className="glass rounded-[2.5rem] overflow-hidden border border-white/10 group hover:-translate-y-4 transition-all duration-700 ease-expo-out opacity-0 animate-reveal-up"
+                style={{ animationDelay: `${idx * 150}ms`, animationFillMode: 'forwards' }}
+              >
+                <div className="h-56 bg-gradient-to-br from-brand-surface to-brand-dark flex items-center justify-center overflow-hidden relative">
+                   <div className="absolute inset-0 bg-brand-purple/20 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+                   <i className={`fas ${t.icon} text-7xl text-brand-purple group-hover:scale-125 group-hover:rotate-6 transition-all duration-1000`}></i>
                 </div>
-                <div className="p-6">
-                  <div className="text-xs text-brand-purple font-bold mb-2 uppercase">{t.category}</div>
-                  <h3 className="text-xl font-bold text-white mb-2">{t.title}</h3>
-                  <p className="text-gray-400 text-sm mb-6">{t.description}</p>
+                <div className="p-8">
+                  <div className="text-[10px] text-brand-purple font-black mb-3 uppercase tracking-[0.2em]">{t.category}</div>
+                  <h3 className="text-2xl font-black text-white mb-3">{t.title}</h3>
+                  <p className="text-gray-400 text-sm mb-8 leading-relaxed">{t.description}</p>
                   <div className="flex items-center justify-between">
-                    <span className="text-2xl font-black text-white">${t.price}</span>
+                    <span className="text-3xl font-black text-white tracking-tighter">${t.price}</span>
                     <button 
                       onClick={() => setSelectedTemplate(t)}
-                      className="px-4 py-2 bg-brand-purple/20 text-brand-purple font-bold text-sm rounded-lg hover:bg-brand-purple hover:text-white transition-colors"
+                      className="px-6 py-3 bg-brand-purple/10 text-brand-purple font-black text-xs uppercase tracking-widest rounded-xl hover:bg-brand-purple hover:text-white transition-all transform active:scale-95"
                     >
                       Acheter
                     </button>
@@ -216,37 +218,47 @@ const App: React.FC = () => {
       </section>
 
       {/* Pricing Section */}
-      <section id="offres" className="py-24 bg-brand-accent/5">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <div className="mb-16">
-            <h2 className="text-4xl font-extrabold text-white mb-4">Tarification <span className="text-brand-accent">Transparente</span></h2>
-            <p className="text-gray-400">Des offres adaptées à chaque étape de votre projet.</p>
+      <section id="offres" className="py-32 bg-brand-accent/5">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-20">
+            <h2 className="text-5xl font-black text-white mb-6">Nos <span className="text-brand-accent">Packs</span> Business</h2>
+            <p className="text-gray-400 text-lg">Choisissez le catalyseur de votre réussite numérique.</p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {PRICING_PLANS.map(plan => (
-              <div key={plan.id} className={`p-10 rounded-[2.5rem] text-left border transition-all hover:scale-105 ${plan.isPremium ? 'bg-gradient-to-b from-brand-purple/20 to-brand-dark border-brand-purple shadow-xl shadow-brand-purple/10' : 'glass border-white/10'}`}>
-                {plan.isPremium && <div className="inline-block px-3 py-1 bg-brand-purple text-white text-[10px] font-bold rounded-full mb-6">RECOMMANDÉ</div>}
-                <h3 className="text-xl font-bold text-white mb-2">{plan.name}</h3>
-                <div className="text-4xl font-black text-white mb-4">{plan.price}</div>
-                <p className="text-sm text-gray-400 mb-8 h-12">{plan.description}</p>
-                <ul className="space-y-4 mb-10">
+          <div className="grid md:grid-cols-3 gap-10 max-w-6xl mx-auto">
+            {PRICING_PLANS.map((plan, idx) => (
+              <div 
+                key={plan.id} 
+                className={`p-12 rounded-[3rem] text-left border transition-all duration-700 ease-expo-out hover:-translate-y-6 hover:shadow-[0_40px_100px_-20px_rgba(0,0,0,0.6)] opacity-0 animate-reveal-up ${plan.isPremium ? 'bg-gradient-to-b from-brand-purple/20 to-brand-dark border-brand-purple/50' : 'glass border-white/10'}`}
+                style={{ animationDelay: `${idx * 200}ms`, animationFillMode: 'forwards' }}
+              >
+                {plan.isPremium && <div className="inline-block px-4 py-1 bg-brand-purple text-white text-[10px] font-black rounded-full mb-8 tracking-[0.2em]">PLATINUM</div>}
+                <h3 className="text-2xl font-black text-white mb-2">{plan.name}</h3>
+                <div className="text-5xl font-black text-white mb-6 tracking-tighter">{plan.price}</div>
+                <p className="text-sm text-gray-500 mb-10 h-12 leading-relaxed">{plan.description}</p>
+                <div className="space-y-5 mb-12">
                   {plan.features.map((f, i) => (
-                    <li key={i} className="flex items-center text-sm text-gray-200">
-                      <i className="fas fa-check text-green-400 mr-3"></i> {f}
-                    </li>
+                    <div key={i} className="flex items-center text-sm text-gray-200">
+                      <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center mr-4">
+                        <i className="fas fa-check text-[10px] text-green-400"></i>
+                      </div> 
+                      {f}
+                    </div>
                   ))}
                   {plan.unavailableFeatures.map((f, i) => (
-                    <li key={i} className="flex items-center text-sm text-gray-500">
-                      <i className="fas fa-times text-red-400/50 mr-3"></i> {f}
-                    </li>
+                    <div key={i} className="flex items-center text-sm text-gray-600">
+                      <div className="w-5 h-5 rounded-full bg-red-500/10 flex items-center justify-center mr-4">
+                        <i className="fas fa-times text-[10px] text-red-400/50"></i>
+                      </div> 
+                      {f}
+                    </div>
                   ))}
-                </ul>
+                </div>
                 <button 
                   onClick={() => setSelectedPlan(plan)}
-                  className={`w-full py-4 rounded-xl font-bold transition-all ${plan.isPremium ? 'bg-brand-purple text-white shadow-lg' : 'bg-white/10 text-white hover:bg-white/20'}`}
+                  className={`w-full py-5 rounded-2xl font-black text-xs uppercase tracking-widest transition-all transform active:scale-95 ${plan.isPremium ? 'bg-brand-purple text-white shadow-xl shadow-brand-purple/20 hover:opacity-90' : 'bg-white/10 text-white hover:bg-white/20'}`}
                 >
-                  Choisir ce pack
+                  Commander le pack
                 </button>
               </div>
             ))}
@@ -257,22 +269,24 @@ const App: React.FC = () => {
       {/* Pricing Order Modal */}
       {selectedPlan && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-brand-dark/80 backdrop-blur-md" onClick={() => setSelectedPlan(null)}></div>
-          <div className="glass w-full max-w-lg p-8 rounded-[2.5rem] border border-white/20 relative animate-float shadow-2xl">
-            <button onClick={() => setSelectedPlan(null)} className="absolute top-6 right-6 text-gray-400 hover:text-white">
-              <i className="fas fa-times text-xl"></i>
+          <div className="absolute inset-0 bg-brand-dark/90 backdrop-blur-2xl animate-fade-in" onClick={() => setSelectedPlan(null)}></div>
+          <div className="glass w-full max-w-lg p-10 rounded-[3rem] border border-white/20 relative animate-zoom-in shadow-[0_50px_100px_-20px_rgba(0,0,0,1)]">
+            <button onClick={() => setSelectedPlan(null)} className="absolute top-8 right-8 text-gray-500 hover:text-white transition-colors">
+              <i className="fas fa-times text-2xl"></i>
             </button>
-            <div className="mb-8">
-              <div className="text-brand-accent text-xs font-bold uppercase tracking-widest mb-2">Finalisez votre commande</div>
-              <h3 className="text-3xl font-black text-white">Pack {selectedPlan.name}</h3>
-              <div className="text-brand-accent text-xl font-bold">{selectedPlan.price}</div>
+            <div className="mb-10">
+              <div className="text-brand-accent text-xs font-black uppercase tracking-[0.3em] mb-3">Confirmation de commande</div>
+              <h3 className="text-4xl font-black text-white tracking-tighter">Pack {selectedPlan.name}</h3>
+              <div className="text-brand-accent text-2xl font-black mt-2 tracking-tighter">{selectedPlan.price}</div>
             </div>
-            <form onSubmit={handleOrderSubmit} className="space-y-5">
-              <input type="text" name="name" required value={orderFormData.name} onChange={handleOrderInputChange} placeholder="Nom Complet" className="w-full bg-brand-dark/50 border border-white/10 rounded-xl px-5 py-4 text-white focus:outline-none focus:border-brand-accent" />
-              <input type="email" name="email" required value={orderFormData.email} onChange={handleOrderInputChange} placeholder="Email professionnel" className="w-full bg-brand-dark/50 border border-white/10 rounded-xl px-5 py-4 text-white focus:outline-none focus:border-brand-accent" />
-              <textarea name="message" required rows={3} value={orderFormData.message} onChange={handleOrderInputChange} placeholder="Description du Projet..." className="w-full bg-brand-dark/50 border border-white/10 rounded-xl px-5 py-4 text-white focus:outline-none focus:border-brand-accent"></textarea>
-              <button type="submit" className="w-full py-5 bg-gradient-to-r from-brand-accent to-brand-purple text-brand-dark font-black text-lg rounded-2xl shadow-xl hover:opacity-90 transition-all">
-                <i className="fab fa-whatsapp mr-2 text-xl"></i> Confirmer sur WhatsApp
+            <form onSubmit={handleOrderSubmit} className="space-y-6">
+              <div className="grid md:grid-cols-2 gap-6">
+                <input type="text" name="name" required value={orderFormData.name} onChange={handleOrderInputChange} placeholder="Nom Complet" className="w-full bg-brand-dark/50 border border-white/10 rounded-2xl px-6 py-5 text-white focus:outline-none focus:border-brand-accent transition-all" />
+                <input type="email" name="email" required value={orderFormData.email} onChange={handleOrderInputChange} placeholder="Email professionnel" className="w-full bg-brand-dark/50 border border-white/10 rounded-2xl px-6 py-5 text-white focus:outline-none focus:border-brand-accent" />
+              </div>
+              <textarea name="message" required rows={3} value={orderFormData.message} onChange={handleOrderInputChange} placeholder="Décrivez brièvement votre projet..." className="w-full bg-brand-dark/50 border border-white/10 rounded-2xl px-6 py-5 text-white focus:outline-none focus:border-brand-accent"></textarea>
+              <button type="submit" className="w-full py-5 bg-gradient-to-r from-brand-accent to-brand-purple text-brand-dark font-black text-sm uppercase tracking-[0.2em] rounded-2xl shadow-2xl hover:brightness-110 active:scale-95 transition-all">
+                <i className="fab fa-whatsapp mr-2 text-xl"></i> Lancer sur WhatsApp
               </button>
             </form>
           </div>
@@ -282,88 +296,80 @@ const App: React.FC = () => {
       {/* Template Purchase Modal */}
       {selectedTemplate && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-brand-dark/80 backdrop-blur-md" onClick={() => setSelectedTemplate(null)}></div>
-          <div className="glass w-full max-w-lg p-8 rounded-[2.5rem] border border-brand-purple/30 relative animate-float shadow-2xl">
-            <button onClick={() => setSelectedTemplate(null)} className="absolute top-6 right-6 text-gray-400 hover:text-white">
-              <i className="fas fa-times text-xl"></i>
+          <div className="absolute inset-0 bg-brand-dark/90 backdrop-blur-2xl animate-fade-in" onClick={() => setSelectedTemplate(null)}></div>
+          <div className="glass w-full max-w-lg p-10 rounded-[3rem] border border-brand-purple/30 relative animate-zoom-in shadow-[0_50px_100px_-20px_rgba(0,0,0,1)]">
+            <button onClick={() => setSelectedTemplate(null)} className="absolute top-8 right-8 text-gray-500 hover:text-white transition-colors">
+              <i className="fas fa-times text-2xl"></i>
             </button>
-            <div className="mb-8">
-              <div className="text-brand-purple text-xs font-bold uppercase tracking-widest mb-2">Achat de Template</div>
-              <h3 className="text-3xl font-black text-white">{selectedTemplate.title}</h3>
-              <div className="flex items-center space-x-3 mt-1">
-                <span className="text-gray-400 text-sm">{selectedTemplate.category}</span>
-                <span className="text-brand-purple text-xl font-bold">${selectedTemplate.price}</span>
+            <div className="mb-10">
+              <div className="text-brand-purple text-xs font-black uppercase tracking-[0.3em] mb-3">Acquisition Template</div>
+              <h3 className="text-4xl font-black text-white tracking-tighter">{selectedTemplate.title}</h3>
+              <div className="flex items-center space-x-4 mt-2">
+                <span className="text-gray-500 text-sm font-bold">{selectedTemplate.category}</span>
+                <span className="text-brand-purple text-2xl font-black">${selectedTemplate.price}</span>
               </div>
             </div>
-            <form onSubmit={handleTemplateOrderSubmit} className="space-y-5">
-              <input type="text" name="name" required value={templateOrderFormData.name} onChange={handleTemplateOrderInputChange} placeholder="Votre Nom" className="w-full bg-brand-dark/50 border border-white/10 rounded-xl px-5 py-4 text-white focus:outline-none focus:border-brand-purple" />
-              <input type="email" name="email" required value={templateOrderFormData.email} onChange={handleTemplateOrderInputChange} placeholder="Votre Email" className="w-full bg-brand-dark/50 border border-white/10 rounded-xl px-5 py-4 text-white focus:outline-none focus:border-brand-purple" />
-              <textarea name="message" required rows={3} value={templateOrderFormData.message} onChange={handleTemplateOrderInputChange} placeholder="Informations complémentaires ou personnalisation..." className="w-full bg-brand-dark/50 border border-white/10 rounded-xl px-5 py-4 text-white focus:outline-none focus:border-brand-purple"></textarea>
-              <button type="submit" className="w-full py-5 bg-gradient-to-r from-brand-purple to-brand-dark text-white font-black text-lg rounded-2xl shadow-xl hover:opacity-90 border border-brand-purple/50 transition-all">
-                <i className="fab fa-whatsapp mr-2 text-xl"></i> Commander sur WhatsApp
+            <form onSubmit={handleTemplateOrderSubmit} className="space-y-6">
+              <div className="grid md:grid-cols-2 gap-6">
+                <input type="text" name="name" required value={templateOrderFormData.name} onChange={handleTemplateOrderInputChange} placeholder="Votre Nom" className="w-full bg-brand-dark/50 border border-white/10 rounded-2xl px-6 py-5 text-white focus:outline-none focus:border-brand-purple" />
+                <input type="email" name="email" required value={templateOrderFormData.email} onChange={handleTemplateOrderInputChange} placeholder="Votre Email" className="w-full bg-brand-dark/50 border border-white/10 rounded-2xl px-6 py-5 text-white focus:outline-none focus:border-brand-purple" />
+              </div>
+              <textarea name="message" required rows={3} value={templateOrderFormData.message} onChange={handleTemplateOrderInputChange} placeholder="Souhaitez-vous une installation assistée ?" className="w-full bg-brand-dark/50 border border-white/10 rounded-2xl px-6 py-5 text-white focus:outline-none focus:border-brand-purple"></textarea>
+              <button type="submit" className="w-full py-5 bg-gradient-to-r from-brand-purple to-brand-dark text-white font-black text-sm uppercase tracking-[0.2em] rounded-2xl shadow-2xl border border-brand-purple/50 hover:brightness-110 active:scale-95 transition-all">
+                <i className="fab fa-whatsapp mr-2 text-xl"></i> Obtenir sur WhatsApp
               </button>
-              <p className="text-[10px] text-center text-gray-500 italic">Un expert WANZCORP vous répondra instantanément pour finaliser l'installation.</p>
             </form>
           </div>
         </div>
       )}
 
       {/* Contact Section */}
-      <section id="contact" className="py-24">
+      <section id="contact" className="py-32">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="glass rounded-[3rem] p-8 md:p-16 border border-white/10">
-             <div className="grid lg:grid-cols-2 gap-16">
-                <div>
-                  <h2 className="text-4xl font-extrabold text-white mb-6">Parlons de votre <br/><span className="gradient-text">Prochain Succès</span></h2>
-                  <p className="text-gray-400 mb-10">Notre équipe d'experts est prête à relever vos défis technologiques les plus complexes. Chaque message nous parvient directement sur WhatsApp.</p>
+          <div className="glass rounded-[4rem] p-10 md:p-20 border border-white/10 relative overflow-hidden">
+             <div className="absolute top-0 right-0 w-96 h-96 bg-brand-accent/5 blur-[100px] rounded-full -mr-48 -mt-48"></div>
+             <div className="grid lg:grid-cols-2 gap-24 relative z-10">
+                <div className="animate-reveal-up">
+                  <h2 className="text-5xl font-black text-white mb-8 leading-tight">Parlons de votre <br/><span className="gradient-text">Prochaine Étape</span></h2>
+                  <p className="text-gray-400 text-lg mb-12 leading-relaxed">Nous ne créons pas seulement des logiciels, nous forgeons des outils de leadership pour votre entreprise.</p>
                   
-                  <div className="space-y-8">
-                    <div className="flex items-center space-x-6">
-                       <div className="w-12 h-12 rounded-2xl bg-brand-accent/10 flex items-center justify-center text-brand-accent">
-                          <i className="fas fa-map-marker-alt"></i>
+                  <div className="space-y-10">
+                    <div className="flex items-center space-x-8 group">
+                       <div className="w-16 h-16 rounded-2xl bg-brand-accent/10 flex items-center justify-center text-brand-accent group-hover:bg-brand-accent group-hover:text-brand-dark transition-all duration-500">
+                          <i className="fas fa-map-marker-alt text-2xl"></i>
                        </div>
                        <div>
-                          <div className="text-xs text-gray-500 font-bold uppercase">Adresse</div>
-                          <div className="text-lg text-white font-medium">3344, avenue des aviateurs<br/>Kinshasa / Gombe</div>
+                          <div className="text-[10px] text-gray-500 font-black uppercase tracking-[0.3em] mb-1">Localisation</div>
+                          <div className="text-xl text-white font-bold">3344, avenue des aviateurs<br/>Kinshasa / Gombe</div>
                        </div>
                     </div>
-                    <div className="flex items-center space-x-6">
-                       <div className="w-12 h-12 rounded-2xl bg-brand-purple/10 flex items-center justify-center text-brand-purple">
-                          <i className="fas fa-envelope"></i>
+                    <div className="flex items-center space-x-8 group">
+                       <div className="w-16 h-16 rounded-2xl bg-brand-purple/10 flex items-center justify-center text-brand-purple group-hover:bg-brand-purple group-hover:text-white transition-all duration-500">
+                          <i className="fas fa-envelope text-2xl"></i>
                        </div>
                        <div>
-                          <div className="text-xs text-gray-500 font-bold uppercase">Email</div>
-                          <div className="text-lg text-white font-medium">contact@wanzcorp.com</div>
-                       </div>
-                    </div>
-                    <div className="flex items-center space-x-6">
-                       <div className="w-12 h-12 rounded-2xl bg-brand-accent/10 flex items-center justify-center text-brand-accent">
-                          <i className="fab fa-whatsapp"></i>
-                       </div>
-                       <div>
-                          <div className="text-xs text-gray-500 font-bold uppercase">WhatsApp</div>
-                          <div className="text-lg text-white font-medium">+243 850 062 491</div>
+                          <div className="text-[10px] text-gray-500 font-black uppercase tracking-[0.3em] mb-1">Email Direct</div>
+                          <div className="text-xl text-white font-bold">contact@wanzcorp.com</div>
                        </div>
                     </div>
                   </div>
                 </div>
 
-                <form className="space-y-6" onSubmit={handleWhatsAppSubmit}>
+                <form className="space-y-6 animate-reveal-up [animation-delay:200ms] [animation-fill-mode:forwards] opacity-0" onSubmit={handleWhatsAppSubmit}>
                   <div className="grid md:grid-cols-2 gap-6">
-                    <input type="text" name="name" required value={formData.name} onChange={handleInputChange} placeholder="Nom complet" className="w-full bg-brand-dark/50 border border-white/10 rounded-xl px-6 py-4 text-white focus:outline-none focus:border-brand-accent" />
-                    <input type="email" name="email" required value={formData.email} onChange={handleInputChange} placeholder="Email" className="w-full bg-brand-dark/50 border border-white/10 rounded-xl px-6 py-4 text-white focus:outline-none focus:border-brand-accent" />
+                    <input type="text" name="name" required value={formData.name} onChange={handleInputChange} placeholder="Nom" className="w-full bg-brand-dark/50 border border-white/10 rounded-2xl px-6 py-5 text-white focus:outline-none focus:border-brand-accent" />
+                    <input type="email" name="email" required value={formData.email} onChange={handleInputChange} placeholder="Email" className="w-full bg-brand-dark/50 border border-white/10 rounded-2xl px-6 py-5 text-white focus:outline-none focus:border-brand-accent" />
                   </div>
-                  <select name="service" value={formData.service} onChange={handleInputChange} className="w-full bg-brand-dark/50 border border-white/10 rounded-xl px-6 py-4 text-white focus:outline-none focus:border-brand-accent">
-                    <option value="">Sélectionnez un service</option>
+                  <select name="service" value={formData.service} onChange={handleInputChange} className="w-full bg-brand-dark/50 border border-white/10 rounded-2xl px-6 py-5 text-white focus:outline-none focus:border-brand-accent appearance-none">
+                    <option value="">Projet type...</option>
                     <option value="Développement Web">Développement Web</option>
                     <option value="Application Mobile">Application Mobile</option>
-                    <option value="Logiciel Desktop">Logiciel Desktop</option>
-                    <option value="Intelligence Artificielle">Intelligence Artificielle</option>
-                    <option value="Design UI/UX">Design UI/UX</option>
+                    <option value="Automatisé">Systèmes Automatisés</option>
+                    <option value="Design UX">UI/UX Design</option>
                   </select>
-                  <textarea name="message" required rows={4} value={formData.message} onChange={handleInputChange} placeholder="Décrivez votre projet..." className="w-full bg-brand-dark/50 border border-white/10 rounded-xl px-6 py-4 text-white focus:outline-none focus:border-brand-accent"></textarea>
-                  <button type="submit" className="w-full py-4 bg-gradient-to-r from-brand-accent to-brand-purple text-brand-dark font-black text-lg rounded-xl shadow-xl hover:opacity-90 transition-all active:scale-[0.98]">
-                    <i className="fab fa-whatsapp mr-2"></i> Envoyer sur WhatsApp
+                  <textarea name="message" required rows={4} value={formData.message} onChange={handleInputChange} placeholder="Parlez-nous de vos objectifs..." className="w-full bg-brand-dark/50 border border-white/10 rounded-2xl px-6 py-5 text-white focus:outline-none focus:border-brand-accent"></textarea>
+                  <button type="submit" className="w-full py-6 bg-gradient-to-r from-brand-accent via-brand-accent to-brand-purple text-brand-dark font-black text-sm uppercase tracking-[0.3em] rounded-2xl shadow-[0_20px_40px_-15px_rgba(0,210,255,0.4)] hover:shadow-[0_25px_50px_-12px_rgba(0,210,255,0.6)] hover:-translate-y-1 transition-all active:scale-[0.98]">
+                    Lancer la discussion
                   </button>
                 </form>
              </div>
@@ -372,22 +378,20 @@ const App: React.FC = () => {
       </section>
 
       {/* Footer */}
-      <footer className="py-12 border-t border-white/5 bg-brand-dark">
+      <footer className="py-20 border-t border-white/5 bg-brand-dark/50">
         <div className="max-w-7xl mx-auto px-4 text-center">
-          <div className="flex flex-col items-center justify-center space-y-4 mb-4">
-            <Logo className="text-brand-accent" size={96} />
-            <span className="text-xl font-black text-white">WANZCORP</span>
+          <div className="flex flex-col items-center justify-center space-y-6 mb-12 animate-fade-in">
+            <Logo className="text-brand-accent transform hover:scale-110 transition-transform duration-700" size={120} />
+            <span className="text-3xl font-black text-white tracking-tighter">WANZCORP</span>
           </div>
-          <div className="text-gray-400 text-sm mb-6 max-w-sm mx-auto">
-            <i className="fas fa-map-marker-alt text-brand-accent mr-2"></i> 3344, avenue des aviateurs, Kinshasa / Gombe
+          <div className="flex justify-center space-x-8 mb-12">
+            {['facebook-f', 'twitter', 'linkedin-in', 'instagram'].map(icon => (
+              <a key={icon} href="#" className="w-12 h-12 glass rounded-2xl flex items-center justify-center text-gray-500 hover:text-brand-accent hover:scale-125 transition-all duration-500">
+                <i className={`fab fa-${icon}`}></i>
+              </a>
+            ))}
           </div>
-          <p className="text-gray-500 text-sm mb-8">© 2026 WANZCORP. Créativité Informatique & Intelligence Artificielle.</p>
-          <div className="flex justify-center space-x-6">
-            <a href="#" className="text-gray-400 hover:text-brand-accent transition-colors"><i className="fab fa-facebook-f"></i></a>
-            <a href="#" className="text-gray-400 hover:text-brand-accent transition-colors"><i className="fab fa-twitter"></i></a>
-            <a href="#" className="text-gray-400 hover:text-brand-accent transition-colors"><i className="fab fa-linkedin-in"></i></a>
-            <a href="#" className="text-gray-400 hover:text-brand-accent transition-colors"><i className="fab fa-instagram"></i></a>
-          </div>
+          <p className="text-gray-600 text-[10px] uppercase tracking-[0.5em]">© 2026 WANZCORP • Kinshasa Gombe</p>
         </div>
       </footer>
 
