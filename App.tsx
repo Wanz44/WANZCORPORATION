@@ -4,15 +4,22 @@ import Navbar from './components/Navbar';
 import LiveVoice from './components/LiveVoice';
 import Logo from './components/Logo';
 import { SERVICES, TEMPLATES, PRICING_PLANS } from './constants';
-import { ServiceCategory } from './types';
+import { ServiceCategory, PricingPlan } from './types';
 
 const App: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState<ServiceCategory | 'all'>('all');
+  const [selectedPlan, setSelectedPlan] = useState<PricingPlan | null>(null);
   
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     service: '',
+    message: ''
+  });
+
+  const [orderFormData, setOrderFormData] = useState({
+    name: '',
+    email: '',
     message: ''
   });
 
@@ -25,18 +32,36 @@ const App: React.FC = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleOrderInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setOrderFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const WHATSAPP_NUMBER = "243850062491";
+
   const handleWhatsAppSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    const phoneNumber = "243850062491";
     const text = `*Nouveau Message WANZCORP*%0A%0A` +
                  `*Nom:* ${formData.name}%0A` +
                  `*Email:* ${formData.email}%0A` +
                  `*Service:* ${formData.service || 'Non spécifié'}%0A` +
                  `*Projet:* ${formData.message}`;
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${text}`, '_blank');
+  };
+
+  const handleOrderSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedPlan) return;
+
+    const text = `*COMMANDE DE PACK WANZCORP*%0A%0A` +
+                 `*Pack:* ${selectedPlan.name}%0A` +
+                 `*Prix:* ${selectedPlan.price}%0A%0A` +
+                 `*Client:* ${orderFormData.name}%0A` +
+                 `*Email:* ${orderFormData.email}%0A` +
+                 `*Détails du projet:* ${orderFormData.message}`;
     
-    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${text}`;
-    window.open(whatsappUrl, '_blank');
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${text}`, '_blank');
+    setSelectedPlan(null); // Close modal
   };
 
   return (
@@ -68,7 +93,6 @@ const App: React.FC = () => {
             </a>
           </div>
           
-          {/* Dashboard Preview mockup */}
           <div className="mt-20 relative max-w-5xl mx-auto">
              <div className="glass rounded-3xl p-2 border border-white/10 shadow-2xl transform rotate-1">
                 <img src="https://picsum.photos/1200/600?grayscale" alt="Dashboard" className="rounded-2xl opacity-50 grayscale hover:grayscale-0 transition-all duration-700" />
@@ -187,7 +211,10 @@ const App: React.FC = () => {
                     </li>
                   ))}
                 </ul>
-                <button className={`w-full py-4 rounded-xl font-bold transition-all ${plan.isPremium ? 'bg-brand-purple text-white shadow-lg' : 'bg-white/10 text-white hover:bg-white/20'}`}>
+                <button 
+                  onClick={() => setSelectedPlan(plan)}
+                  className={`w-full py-4 rounded-xl font-bold transition-all ${plan.isPremium ? 'bg-brand-purple text-white shadow-lg' : 'bg-white/10 text-white hover:bg-white/20'}`}
+                >
                   Choisir ce pack
                 </button>
               </div>
@@ -195,6 +222,74 @@ const App: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* Order Modal Form */}
+      {selectedPlan && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-brand-dark/80 backdrop-blur-md" onClick={() => setSelectedPlan(null)}></div>
+          <div className="glass w-full max-w-lg p-8 rounded-[2.5rem] border border-white/20 relative animate-float shadow-2xl">
+            <button 
+              onClick={() => setSelectedPlan(null)}
+              className="absolute top-6 right-6 text-gray-400 hover:text-white"
+            >
+              <i className="fas fa-times text-xl"></i>
+            </button>
+            
+            <div className="mb-8">
+              <div className="text-brand-accent text-xs font-bold uppercase tracking-widest mb-2">Finalisez votre commande</div>
+              <h3 className="text-3xl font-black text-white">Pack {selectedPlan.name}</h3>
+              <div className="text-brand-accent text-xl font-bold">{selectedPlan.price}</div>
+            </div>
+
+            <form onSubmit={handleOrderSubmit} className="space-y-5">
+              <div>
+                <label className="block text-xs font-bold text-gray-500 uppercase mb-2 ml-1">Nom Complet</label>
+                <input 
+                  type="text" 
+                  name="name"
+                  required
+                  value={orderFormData.name}
+                  onChange={handleOrderInputChange}
+                  placeholder="Votre nom"
+                  className="w-full bg-brand-dark/50 border border-white/10 rounded-xl px-5 py-4 text-white focus:outline-none focus:border-brand-accent transition-all"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-gray-500 uppercase mb-2 ml-1">Email professionnel</label>
+                <input 
+                  type="email" 
+                  name="email"
+                  required
+                  value={orderFormData.email}
+                  onChange={handleOrderInputChange}
+                  placeholder="email@compagnie.com"
+                  className="w-full bg-brand-dark/50 border border-white/10 rounded-xl px-5 py-4 text-white focus:outline-none focus:border-brand-accent transition-all"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-gray-500 uppercase mb-2 ml-1">Description du Projet</label>
+                <textarea 
+                  name="message"
+                  required
+                  rows={3}
+                  value={orderFormData.message}
+                  onChange={handleOrderInputChange}
+                  placeholder="Dites-nous en plus sur vos besoins..."
+                  className="w-full bg-brand-dark/50 border border-white/10 rounded-xl px-5 py-4 text-white focus:outline-none focus:border-brand-accent transition-all"
+                ></textarea>
+              </div>
+              
+              <button 
+                type="submit" 
+                className="w-full py-5 bg-gradient-to-r from-brand-accent to-brand-purple text-brand-dark font-black text-lg rounded-2xl shadow-xl hover:opacity-90 transform active:scale-95 transition-all"
+              >
+                <i className="fab fa-whatsapp mr-2 text-xl"></i> Confirmer sur WhatsApp
+              </button>
+              <p className="text-[10px] text-center text-gray-500">En cliquant, vous serez redirigé vers notre ligne WhatsApp directe.</p>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* Contact Section */}
       <section id="contact" className="py-24">
