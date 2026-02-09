@@ -4,8 +4,10 @@ import Logo from './Logo';
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
   const [scrolled, setScrolled] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const navLinks = [
     { name: 'Accueil', href: '#home', id: 'home' },
@@ -40,6 +42,18 @@ const Navbar: React.FC = () => {
   const toggleMenu = () => setIsOpen(!isOpen);
   const closeMenu = () => setIsOpen(false);
 
+  const shareLinks = [
+    { icon: 'fa-twitter', name: 'Twitter', color: '#1DA1F2', url: `https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent('Découvrez WANZCORP - Science de l\'Informatique & IA')}` },
+    { icon: 'fa-linkedin-in', name: 'LinkedIn', color: '#0077b5', url: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}` },
+    { icon: 'fa-facebook-f', name: 'Facebook', color: '#1877F2', url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}` },
+  ];
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(window.location.href);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
     <nav className={`fixed top-0 left-0 right-0 z-[80] transition-all duration-700 ease-expo-out ${
       scrolled ? 'py-4' : 'py-10'
@@ -49,13 +63,63 @@ const Navbar: React.FC = () => {
           scrolled ? 'bg-brand-dark/80 backdrop-blur-2xl border-white/10 shadow-2xl px-6 py-2' : 'bg-transparent border-transparent px-0 py-0'
         }`}>
           <div className="flex items-center justify-between h-20">
-            {/* Logo */}
-            <a href="#home" onClick={closeMenu} className="flex-shrink-0 flex items-center space-x-4 group">
-               <div className="transition-all duration-700 ease-expo-out transform group-hover:scale-110 group-hover:rotate-3">
-                  <Logo className="text-brand-accent" size={scrolled ? 80 : 130} />
-               </div>
-               <span className={`text-xl font-black tracking-tighter text-white transition-opacity duration-500 ${scrolled ? 'opacity-100' : 'opacity-100 md:opacity-0'}`}>WANZCORP</span>
-            </a>
+            {/* Logo Group */}
+            <div className="flex items-center space-x-4">
+              <a href="#home" onClick={closeMenu} className="flex-shrink-0 flex items-center space-x-4 group">
+                 <div className="transition-all duration-700 ease-expo-out transform group-hover:scale-110 group-hover:rotate-3">
+                    <Logo className="text-brand-accent" size={scrolled ? 80 : 130} />
+                 </div>
+                 <span className={`text-xl font-black tracking-tighter text-white transition-opacity duration-500 ${scrolled ? 'opacity-100' : 'opacity-100 md:opacity-0'}`}>WANZCORP</span>
+              </a>
+
+              {/* Share Trigger */}
+              <div className="relative">
+                <button 
+                  onClick={() => setIsShareModalOpen(!isShareModalOpen)}
+                  className={`w-8 h-8 rounded-full glass border-white/10 flex items-center justify-center text-xs text-gray-400 hover:text-brand-accent transition-all duration-500 active:scale-90 ${isShareModalOpen ? 'text-brand-accent scale-110' : ''}`}
+                  title="Partager le site"
+                >
+                  <i className="fas fa-share-alt"></i>
+                </button>
+
+                {/* Share Modal */}
+                {isShareModalOpen && (
+                  <>
+                    <div className="fixed inset-0 z-10" onClick={() => setIsShareModalOpen(false)}></div>
+                    <div className="absolute top-12 left-0 z-20 w-48 glass rounded-2xl border border-white/20 p-4 shadow-2xl animate-zoom-in origin-top-left">
+                      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 mb-4 px-2">Partager</p>
+                      <div className="flex flex-col space-y-1">
+                        {shareLinks.map((link) => (
+                          <a 
+                            key={link.name} 
+                            href={link.url} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="flex items-center space-x-3 p-2 rounded-xl hover:bg-white/5 transition-all group"
+                          >
+                            <div className="w-8 h-8 rounded-lg flex items-center justify-center transition-all" style={{ backgroundColor: `${link.color}20`, color: link.color }}>
+                              <i className={`fab ${link.icon}`}></i>
+                            </div>
+                            <span className="text-xs font-bold text-gray-300 group-hover:text-white">{link.name}</span>
+                          </a>
+                        ))}
+                        <button 
+                          onClick={copyToClipboard}
+                          className="flex items-center space-x-3 p-2 rounded-xl hover:bg-white/5 transition-all group w-full text-left"
+                        >
+                          <div className="w-8 h-8 rounded-lg bg-brand-accent/10 flex items-center justify-center text-brand-accent transition-all">
+                            <i className={`fas ${copied ? 'fa-check' : 'fa-link'}`}></i>
+                          </div>
+                          <span className="text-xs font-bold text-gray-300 group-hover:text-white">
+                            {copied ? 'Copié !' : 'Lien'}
+                          </span>
+                        </button>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
             
             {/* Desktop Navigation */}
             <div className="hidden md:block">

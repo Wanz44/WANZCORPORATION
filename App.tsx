@@ -1,7 +1,6 @@
 
 import React, { useState } from 'react';
 import Navbar from './components/Navbar';
-import LiveVoice from './components/LiveVoice';
 import Logo from './components/Logo';
 import { SERVICES, TEMPLATES, PRICING_PLANS } from './constants';
 import { ServiceCategory, PricingPlan, Template } from './types';
@@ -10,6 +9,7 @@ const App: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState<ServiceCategory | 'all'>('all');
   const [selectedPlan, setSelectedPlan] = useState<PricingPlan | null>(null);
   const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
+  const [pendingWhatsAppUrl, setPendingWhatsAppUrl] = useState<string | null>(null);
   
   const [formData, setFormData] = useState({
     name: '',
@@ -58,7 +58,7 @@ const App: React.FC = () => {
                  `*Email:* ${formData.email}%0A` +
                  `*Service:* ${formData.service || 'Non spécifié'}%0A` +
                  `*Projet:* ${formData.message}`;
-    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${text}`, '_blank');
+    setPendingWhatsAppUrl(`https://wa.me/${WHATSAPP_NUMBER}?text=${text}`);
   };
 
   const handleOrderSubmit = (e: React.FormEvent) => {
@@ -72,8 +72,7 @@ const App: React.FC = () => {
                  `*Email:* ${orderFormData.email}%0A` +
                  `*Détails du projet:* ${orderFormData.message}`;
     
-    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${text}`, '_blank');
-    setSelectedPlan(null);
+    setPendingWhatsAppUrl(`https://wa.me/${WHATSAPP_NUMBER}?text=${text}`);
   };
 
   const handleTemplateOrderSubmit = (e: React.FormEvent) => {
@@ -88,8 +87,16 @@ const App: React.FC = () => {
                  `*Email:* ${templateOrderFormData.email}%0A` +
                  `*Demande:* ${templateOrderFormData.message}`;
     
-    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${text}`, '_blank');
-    setSelectedTemplate(null);
+    setPendingWhatsAppUrl(`https://wa.me/${WHATSAPP_NUMBER}?text=${text}`);
+  };
+
+  const confirmAndRedirect = () => {
+    if (pendingWhatsAppUrl) {
+      window.open(pendingWhatsAppUrl, '_blank');
+      setPendingWhatsAppUrl(null);
+      setSelectedPlan(null);
+      setSelectedTemplate(null);
+    }
   };
 
   return (
@@ -266,8 +273,36 @@ const App: React.FC = () => {
         </div>
       </section>
 
+      {/* Confirmation WhatsApp Modal */}
+      {pendingWhatsAppUrl && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-brand-dark/95 backdrop-blur-xl animate-fade-in" onClick={() => setPendingWhatsAppUrl(null)}></div>
+          <div className="glass w-full max-w-sm p-8 rounded-[2.5rem] border border-brand-accent/30 relative animate-zoom-in text-center shadow-[0_50px_100px_-20px_rgba(0,0,0,1)]">
+            <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+              <i className="fab fa-whatsapp text-4xl text-green-500"></i>
+            </div>
+            <h3 className="text-2xl font-black text-white mb-4 tracking-tight">Redirection WhatsApp</h3>
+            <p className="text-gray-400 text-sm mb-8 leading-relaxed">Vous allez être redirigé vers WhatsApp pour finaliser votre demande avec un conseiller WANZCORP.</p>
+            <div className="flex flex-col space-y-3">
+              <button 
+                onClick={confirmAndRedirect}
+                className="w-full py-4 bg-brand-accent text-brand-dark font-black text-xs uppercase tracking-widest rounded-xl hover:brightness-110 active:scale-95 transition-all"
+              >
+                Continuer vers WhatsApp
+              </button>
+              <button 
+                onClick={() => setPendingWhatsAppUrl(null)}
+                className="w-full py-4 bg-white/5 text-gray-400 font-black text-xs uppercase tracking-widest rounded-xl hover:text-white transition-all"
+              >
+                Annuler
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Pricing Order Modal */}
-      {selectedPlan && (
+      {selectedPlan && !pendingWhatsAppUrl && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-brand-dark/90 backdrop-blur-2xl animate-fade-in" onClick={() => setSelectedPlan(null)}></div>
           <div className="glass w-full max-w-lg p-10 rounded-[3rem] border border-white/20 relative animate-zoom-in shadow-[0_50px_100px_-20px_rgba(0,0,0,1)]">
@@ -294,7 +329,7 @@ const App: React.FC = () => {
       )}
 
       {/* Template Purchase Modal */}
-      {selectedTemplate && (
+      {selectedTemplate && !pendingWhatsAppUrl && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-brand-dark/90 backdrop-blur-2xl animate-fade-in" onClick={() => setSelectedTemplate(null)}></div>
           <div className="glass w-full max-w-lg p-10 rounded-[3rem] border border-brand-purple/30 relative animate-zoom-in shadow-[0_50px_100px_-20px_rgba(0,0,0,1)]">
@@ -394,8 +429,6 @@ const App: React.FC = () => {
           <p className="text-gray-600 text-[10px] uppercase tracking-[0.5em]">© 2026 WANZCORP • Kinshasa Gombe</p>
         </div>
       </footer>
-
-      <LiveVoice />
     </div>
   );
 };
