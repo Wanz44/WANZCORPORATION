@@ -1,0 +1,8 @@
+{
+  "name": "WANZCORP Intelligent Platform",
+  "description": "Une plateforme d'ingénierie logicielle avancée propulsée par Gemini, offrant des solutions de développement web, mobile et desktop avec assistance IA en temps réel.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
