@@ -105,7 +105,13 @@ const SmartOnboarding: React.FC<SmartOnboardingProps> = ({ onComplete }) => {
       }
     } catch (e: any) {
       console.error("Login Error:", e);
-      setError(e.message);
+      let message = "Connexion Google échouée. Réessaie.";
+      if (e.code === 'auth/popup-closed-by-user') {
+        message = "La fenêtre de connexion a été fermée.";
+      } else if (e.code === 'auth/cancelled-popup-request') {
+        message = "Requête annulée.";
+      }
+      setError(message);
     } finally {
       setIsProcessing(false);
     }
@@ -142,7 +148,24 @@ const SmartOnboarding: React.FC<SmartOnboardingProps> = ({ onComplete }) => {
       }
     } catch (e: any) {
       console.error("Email Auth Error:", e);
-      setError(e.message);
+      let message = "Une erreur est survenue. Réessaie.";
+      
+      if (e.code === 'auth/email-already-in-use') {
+        message = "Cet email est déjà utilisé. Connecte-toi plutôt !";
+        setEmailMode('login');
+      } else if (e.code === 'auth/invalid-email') {
+        message = "L'adresse email n'est pas valide.";
+      } else if (e.code === 'auth/weak-password') {
+        message = "Le mot de passe est trop court (min. 6 caractères).";
+      } else if (e.code === 'auth/user-not-found') {
+        message = "Aucun compte trouvé avec cet email.";
+      } else if (e.code === 'auth/wrong-password') {
+        message = "Mot de passe incorrect.";
+      } else if (e.code === 'auth/invalid-credential') {
+        message = "Email ou mot de passe incorrect.";
+      }
+      
+      setError(message);
     } finally {
       setIsProcessing(false);
     }
