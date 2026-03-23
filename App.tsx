@@ -19,6 +19,7 @@ import FeedbackSystem from './components/ui/FeedbackSystem';
 import WhatsAppConfirmation from './components/modals/WhatsAppConfirmation';
 import PricingOrderModal from './components/modals/PricingOrderModal';
 import TemplatePurchaseModal from './components/modals/TemplatePurchaseModal';
+import Logo from './components/Logo';
 
 // Tools
 import FileConverter from './components/tools/FileConverter';
@@ -120,6 +121,9 @@ const App: React.FC = () => {
             <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-brand-purple/20 blur-[150px] rounded-full animate-pulse-slow delay-1000"></div>
           </div>
           <div className="max-w-7xl mx-auto px-4 text-center animate-reveal-up">
+            <div className="flex justify-center mb-12">
+              <Logo size={120} className="rounded-[2.5rem] shadow-2xl shadow-brand-accent/20" />
+            </div>
             <div className="inline-block px-4 py-1.5 mb-8 rounded-full glass border border-white/20 text-brand-accent text-xs font-bold tracking-widest uppercase animate-fade-in">
               L'excellence Digitale par WANZCORP
             </div>

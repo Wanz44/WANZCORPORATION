@@ -1,13 +1,12 @@
 import React from 'react';
+import Logo from '../Logo';
 
 const Footer = () => (
   <footer className="py-20 border-t border-white/5 bg-brand-dark">
     <div className="max-w-7xl mx-auto px-4 grid md:grid-cols-4 gap-12">
       <div className="col-span-2">
         <div className="flex items-center space-x-3 mb-8">
-          <div className="w-8 h-8 bg-brand-accent rounded-lg flex items-center justify-center">
-            <i className="fas fa-bolt text-brand-dark text-sm"></i>
-          </div>
+          <Logo size={80} className="rounded-xl" />
           <span className="text-xl font-black tracking-tighter text-white">WANZCORP</span>
         </div>
         <p className="text-gray-500 max-w-sm leading-relaxed">

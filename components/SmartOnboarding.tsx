@@ -16,11 +16,20 @@ import {
   ChevronLeft,
   Camera,
   Info,
-  LogIn
+  LogIn,
+  Mail,
+  Lock,
+  ArrowLeft
 } from 'lucide-react';
 import { auth, db } from '../firebase';
-import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import { 
+  signInWithPopup, 
+  GoogleAuthProvider, 
+  createUserWithEmailAndPassword, 
+  signInWithEmailAndPassword 
+} from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
+import Logo from './Logo';
 
 interface UserProfile {
   uid: string;
@@ -47,6 +56,12 @@ interface SmartOnboardingProps {
 const SmartOnboarding: React.FC<SmartOnboardingProps> = ({ onComplete }) => {
   const [step, setStep] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [authMethod, setAuthMethod] = useState<'choice' | 'google' | 'email'>('choice');
+  const [emailMode, setEmailMode] = useState<'login' | 'signup'>('signup');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+
   const [profile, setProfile] = useState<Partial<UserProfile>>({
     interests: [],
     objectives: [],
@@ -66,12 +81,12 @@ const SmartOnboarding: React.FC<SmartOnboardingProps> = ({ onComplete }) => {
 
   const handleGoogleLogin = async () => {
     setIsProcessing(true);
+    setError(null);
     try {
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
 
-      // Check if profile exists in Firestore
       const docRef = doc(db, 'users', user.uid);
       const docSnap = await getDoc(docRef);
 
@@ -88,8 +103,46 @@ const SmartOnboarding: React.FC<SmartOnboardingProps> = ({ onComplete }) => {
         }));
         setStep(1);
       }
-    } catch (e) {
+    } catch (e: any) {
       console.error("Login Error:", e);
+      setError(e.message);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handleEmailAuth = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsProcessing(true);
+    setError(null);
+    try {
+      let user;
+      if (emailMode === 'signup') {
+        const result = await createUserWithEmailAndPassword(auth, email, password);
+        user = result.user;
+      } else {
+        const result = await signInWithEmailAndPassword(auth, email, password);
+        user = result.user;
+      }
+
+      const docRef = doc(db, 'users', user.uid);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        const existingProfile = docSnap.data() as UserProfile;
+        onComplete(existingProfile);
+      } else {
+        setProfile(prev => ({
+          ...prev,
+          uid: user.uid,
+          email: user.email || '',
+          name: email.split('@')[0], // Default name from email
+        }));
+        setStep(1);
+      }
+    } catch (e: any) {
+      console.error("Email Auth Error:", e);
+      setError(e.message);
     } finally {
       setIsProcessing(false);
     }
@@ -168,28 +221,132 @@ const SmartOnboarding: React.FC<SmartOnboardingProps> = ({ onComplete }) => {
             exit={{ opacity: 0, scale: 1.1 }}
             className="space-y-10 text-center"
           >
-            <div className="w-24 h-24 bg-brand-accent/10 rounded-[2.5rem] flex items-center justify-center text-brand-accent mx-auto mb-8 animate-bounce-slow">
-              <LogIn size={48} />
-            </div>
-            <div className="space-y-4">
-              <h2 className="text-5xl font-black text-white tracking-tighter leading-tight">Bienvenue sur <span className="text-brand-accent">WANZCORP</span></h2>
-              <p className="text-gray-400 text-lg max-w-sm mx-auto">Connecte-toi pour accéder à tes outils intelligents et ton flux personnalisé.</p>
+            <div className="flex items-center justify-center mb-8 animate-bounce-slow">
+              <Logo size={80} className="rounded-[2rem]" />
             </div>
             
-            <button 
-              onClick={handleGoogleLogin}
-              disabled={isProcessing}
-              className="w-full py-6 bg-white text-brand-dark font-black rounded-[2rem] hover:scale-105 active:scale-95 transition-all flex items-center justify-center space-x-4 shadow-2xl shadow-white/10 disabled:opacity-50"
-            >
-              {isProcessing ? (
-                <Loader2 className="animate-spin" />
-              ) : (
-                <>
-                  <img src="https://www.google.com/favicon.ico" alt="Google" className="w-6 h-6" />
-                  <span>Continuer avec Google</span>
-                </>
+            <AnimatePresence mode="wait">
+              {authMethod === 'choice' && (
+                <motion.div 
+                  key="choice"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="space-y-8"
+                >
+                  <div className="space-y-4">
+                    <h2 className="text-5xl font-black text-white tracking-tighter leading-tight">Bienvenue sur <span className="text-brand-accent">WANZCORP</span></h2>
+                    <p className="text-gray-400 text-lg max-w-sm mx-auto">Connecte-toi pour accéder à tes outils intelligents et ton flux personnalisé.</p>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <button 
+                      onClick={handleGoogleLogin}
+                      disabled={isProcessing}
+                      className="w-full py-6 bg-white text-brand-dark font-black rounded-[2rem] hover:scale-105 active:scale-95 transition-all flex items-center justify-center space-x-4 shadow-2xl shadow-white/10 disabled:opacity-50"
+                    >
+                      {isProcessing ? (
+                        <Loader2 className="animate-spin" />
+                      ) : (
+                        <>
+                          <img src="https://www.google.com/favicon.ico" alt="Google" className="w-6 h-6" />
+                          <span>Continuer avec Google</span>
+                        </>
+                      )}
+                    </button>
+
+                    <button 
+                      onClick={() => setAuthMethod('email')}
+                      className="w-full py-6 bg-white/5 border border-white/10 text-white font-black rounded-[2rem] hover:bg-white/10 transition-all flex items-center justify-center space-x-4"
+                    >
+                      <Mail size={20} />
+                      <span>Utiliser un Email</span>
+                    </button>
+                  </div>
+                </motion.div>
               )}
-            </button>
+
+              {authMethod === 'email' && (
+                <motion.div 
+                  key="email"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="space-y-8"
+                >
+                  <button 
+                    onClick={() => setAuthMethod('choice')}
+                    className="flex items-center space-x-2 text-gray-500 hover:text-white transition-colors mb-4"
+                  >
+                    <ArrowLeft size={16} />
+                    <span className="text-[10px] font-black uppercase tracking-widest">Retour</span>
+                  </button>
+
+                  <div className="space-y-4">
+                    <h2 className="text-4xl font-black text-white tracking-tighter">
+                      {emailMode === 'signup' ? 'Créer un compte' : 'Se connecter'}
+                    </h2>
+                    <p className="text-gray-400 text-sm">Saisis tes informations pour continuer.</p>
+                  </div>
+
+                  <form onSubmit={handleEmailAuth} className="space-y-4 text-left">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-4">Email</label>
+                      <div className="relative">
+                        <Mail className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-500" size={18} />
+                        <input 
+                          type="email"
+                          required
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          className="w-full bg-white/5 border border-white/10 rounded-[1.5rem] py-4 pl-14 pr-6 text-white focus:border-brand-accent outline-none transition-all"
+                          placeholder="votre@email.com"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-4">Mot de passe</label>
+                      <div className="relative">
+                        <Lock className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-500" size={18} />
+                        <input 
+                          type="password"
+                          required
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          className="w-full bg-white/5 border border-white/10 rounded-[1.5rem] py-4 pl-14 pr-6 text-white focus:border-brand-accent outline-none transition-all"
+                          placeholder="••••••••"
+                        />
+                      </div>
+                    </div>
+
+                    {error && (
+                      <p className="text-red-500 text-xs font-medium px-4">{error}</p>
+                    )}
+
+                    <button 
+                      type="submit"
+                      disabled={isProcessing}
+                      className="w-full py-6 bg-brand-accent text-brand-dark font-black rounded-[2rem] hover:scale-105 active:scale-95 transition-all flex items-center justify-center space-x-4 shadow-2xl shadow-brand-accent/20 disabled:opacity-50"
+                    >
+                      {isProcessing ? (
+                        <Loader2 className="animate-spin" />
+                      ) : (
+                        <span>{emailMode === 'signup' ? 'Créer mon compte' : 'Se connecter'}</span>
+                      )}
+                    </button>
+
+                    <button 
+                      type="button"
+                      onClick={() => setEmailMode(emailMode === 'signup' ? 'login' : 'signup')}
+                      className="w-full py-4 text-gray-500 hover:text-white transition-colors text-xs font-bold"
+                    >
+                      {emailMode === 'signup' ? 'Déjà un compte ? Se connecter' : 'Pas de compte ? Créer un compte'}
+                    </button>
+                  </form>
+                </motion.div>
+              )}
+            </AnimatePresence>
             
             <div className="pt-8 flex items-center justify-center space-x-3 text-gray-600">
               <ShieldCheck size={16} />
