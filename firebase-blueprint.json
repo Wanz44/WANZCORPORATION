@@ -1,0 +1,106 @@
+{
+  "entities": {
+    "Feedback": {
+      "title": "Feedback",
+      "description": "User feedback and ratings for tools and purchases",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "UID of the user who left feedback" },
+        "userName": { "type": "string", "description": "Name of the user" },
+        "userPhoto": { "type": "string", "description": "Photo URL of the user" },
+        "rating": { "type": "number", "description": "Rating from 1 to 5" },
+        "comment": { "type": "string", "description": "User's comment" },
+        "toolId": { "type": "string", "description": "ID of the tool used (optional)" },
+        "purchaseId": { "type": "string", "description": "ID of the purchase (optional)" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Timestamp of creation" }
+      },
+      "required": ["rating", "comment", "createdAt"]
+    },
+    "StockItem": {
+      "title": "StockItem",
+      "description": "Inventory item for small businesses",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "QR Code or unique ID" },
+        "name": { "type": "string", "description": "Product name" },
+        "quantity": { "type": "number", "description": "Current stock quantity" },
+        "price": { "type": "number", "description": "Unit price" },
+        "lastUpdated": { "type": "string", "format": "date-time", "description": "Last stock update" }
+      },
+      "required": ["id", "name", "quantity"]
+    },
+    "Project": {
+      "title": "Project",
+      "description": "Freelance project for client portal",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Project name" },
+        "clientEmail": { "type": "string", "description": "Client email for access" },
+        "progress": { "type": "number", "description": "Project progress (0-100)" },
+        "status": { "type": "string", "enum": ["Planning", "In Progress", "Review", "Completed"], "description": "Project status" },
+        "freelancerId": { "type": "string", "description": "UID of the freelancer" }
+      },
+      "required": ["name", "clientEmail", "progress", "status", "freelancerId"]
+    },
+    "ProjectFile": {
+      "title": "ProjectFile",
+      "description": "File shared in a project",
+      "type": "object",
+      "properties": {
+        "projectId": { "type": "string", "description": "ID of the parent project" },
+        "name": { "type": "string", "description": "File name" },
+        "url": { "type": "string", "description": "Download URL" },
+        "uploadedAt": { "type": "string", "format": "date-time", "description": "Upload timestamp" }
+      },
+      "required": ["projectId", "name", "url", "uploadedAt"]
+    },
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile with personalized tags and info",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Firebase Auth UID" },
+        "name": { "type": "string", "description": "Display name" },
+        "email": { "type": "string", "description": "User email" },
+        "avatar": { "type": "string", "description": "Avatar URL" },
+        "age": { "type": "number", "description": "User age" },
+        "gender": { "type": "string", "description": "User gender" },
+        "profession": { "type": "string", "description": "User profession" },
+        "interests": { "type": "array", "items": { "type": "string" }, "description": "List of interests" },
+        "objectives": { "type": "array", "items": { "type": "string" }, "description": "List of objectives" },
+        "tags": { "type": "array", "items": { "type": "string" }, "description": "AI generated tags" },
+        "location": {
+          "type": "object",
+          "properties": {
+            "neighborhood": { "type": "string" },
+            "city": { "type": "string" },
+            "province": { "type": "string" }
+          }
+        }
+      },
+      "required": ["uid", "name", "email"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User profiles"
+    },
+    "/feedbacks/{feedbackId}": {
+      "schema": "Feedback",
+      "description": "Collection of user feedbacks"
+    },
+    "/stock/{itemId}": {
+      "schema": "StockItem",
+      "description": "Inventory collection"
+    },
+    "/projects/{projectId}": {
+      "schema": "Project",
+      "description": "Freelance projects"
+    },
+    "/projects/{projectId}/files/{fileId}": {
+      "schema": "ProjectFile",
+      "description": "Files shared within a project"
+    }
+  }
+}

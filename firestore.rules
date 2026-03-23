@@ -1,0 +1,117 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    // Collection: feedbacks
+    // Document ID: auto-generated
+    // Fields:
+    //   - userId: string (optional) - UID of the user
+    //   - userName: string (optional) - Name of the user
+    //   - userPhoto: string (optional) - Photo URL of the user
+    //   - rating: number (required, 1-5) - Rating
+    //   - comment: string (required, max 500) - User's comment
+    //   - toolId: string (optional) - ID of the tool used
+    //   - purchaseId: string (optional) - ID of the purchase
+    //   - createdAt: timestamp (required) - Creation time
+    // ===============================================================
+
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    // Collection: users
+    // Document ID: userId (UID)
+    // Fields:
+    //   - uid: string (required) - Firebase Auth UID
+    //   - email: string (required) - User email
+    //   - name: string (required) - Display name
+    //   - avatar: string (optional) - Avatar URL
+    //   - age: number (optional) - User age
+    //   - gender: string (optional) - User gender
+    //   - profession: string (optional) - User profession
+    //   - interests: list (optional) - List of interests
+    //   - objectives: list (optional) - List of objectives
+    //   - tags: list (optional) - AI generated tags
+    //   - location: map (optional) - User location
+    // ===============================================================
+
+    // Helper Functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isValidEmail(email) {
+      return email is string && email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+    }
+
+    function isValidUserProfile(data) {
+      return data.keys().hasAll(['uid', 'email', 'name']) &&
+             data.uid == request.auth.uid &&
+             isValidEmail(data.email) &&
+             data.name is string && data.name.size() > 0 && data.name.size() <= 100 &&
+             (!('age' in data) || (data.age is number && data.age >= 0 && data.age <= 120)) &&
+             (!('gender' in data) || (data.gender is string)) &&
+             (!('profession' in data) || (data.profession is string)) &&
+             (!('interests' in data) || (data.interests is list)) &&
+             (!('objectives' in data) || (data.objectives is list)) &&
+             (!('tags' in data) || (data.tags is list)) &&
+             (!('location' in data) || (data.location is map));
+    }
+
+    match /users/{userId} {
+      allow read: if isOwner(userId);
+      allow create, update: if isOwner(userId) && isValidUserProfile(request.resource.data);
+    }
+
+    function isValidFeedback(data) {
+      return data.keys().hasAll(['rating', 'comment', 'createdAt']) &&
+             data.rating is number && data.rating >= 1 && data.rating <= 5 &&
+             data.comment is string && data.comment.size() > 0 && data.comment.size() <= 500 &&
+             data.createdAt is timestamp;
+    }
+
+    match /feedbacks/{feedbackId} {
+      // Allow anyone to read feedbacks (public testimonials)
+      allow read: if true;
+      
+      // Allow authenticated users to create feedback
+      allow create: if isAuthenticated() && 
+                    isValidFeedback(request.resource.data) &&
+                    (request.resource.data.userId == request.auth.uid || !('userId' in request.resource.data));
+      
+      // Only owners can update or delete their feedback
+      allow update, delete: if isAuthenticated() && 
+                            (resource.data.userId == request.auth.uid);
+    }
+
+    match /stock/{itemId} {
+      // Small business stock: only authenticated users can manage their own stock
+      // For simplicity in this demo, we'll allow any authenticated user to read/write to the global stock
+      // but in a real app we'd scope this to a businessId or similar.
+      allow read, write: if isAuthenticated();
+    }
+
+    match /projects/{projectId} {
+      // Freelancer projects: only the freelancer or the client (by email) can access
+      allow read: if isAuthenticated() && (
+        resource.data.freelancerId == request.auth.uid || 
+        resource.data.clientEmail == request.auth.token.email
+      );
+      allow create: if isAuthenticated() && request.resource.data.freelancerId == request.auth.uid;
+      allow update, delete: if isAuthenticated() && resource.data.freelancerId == request.auth.uid;
+
+      match /files/{fileId} {
+        allow read: if isAuthenticated() && (
+          get(/databases/$(database)/documents/projects/$(projectId)).data.freelancerId == request.auth.uid ||
+          get(/databases/$(database)/documents/projects/$(projectId)).data.clientEmail == request.auth.token.email
+        );
+        allow write: if isAuthenticated() && get(/databases/$(database)/documents/projects/$(projectId)).data.freelancerId == request.auth.uid;
+      }
+    }
+  }
+}

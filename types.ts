@@ -1,10 +1,9 @@
 
 export enum ServiceCategory {
-  WEB = 'web',
-  MOBILE = 'mobile',
-  DESKTOP = 'desktop',
-  DESIGN = 'design',
-  SYSTEM = 'system'
+  WEB = 'Web & Mobile',
+  AI = 'IA & Automation',
+  DESIGN = 'Design & Branding',
+  CLOUD = 'Cloud & DevOps'
 }
 
 export interface Service {
