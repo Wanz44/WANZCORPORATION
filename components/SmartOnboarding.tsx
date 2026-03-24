@@ -34,6 +34,7 @@ import Logo from './Logo';
 interface UserProfile {
   uid: string;
   email: string;
+  username?: string;
   name: string;
   avatar: string;
   age: number;
@@ -56,10 +57,11 @@ interface SmartOnboardingProps {
 const SmartOnboarding: React.FC<SmartOnboardingProps> = ({ onComplete }) => {
   const [step, setStep] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [authMethod, setAuthMethod] = useState<'choice' | 'google' | 'email'>('choice');
-  const [emailMode, setEmailMode] = useState<'login' | 'signup'>('signup');
-  const [email, setEmail] = useState('');
+  const [authMethod, setAuthMethod] = useState<'choice' | 'google' | 'credentials'>('choice');
+  const [authMode, setAuthMode] = useState<'login' | 'signup'>('signup');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [fullName, setFullName] = useState('');
   const [error, setError] = useState<string | null>(null);
 
   const [profile, setProfile] = useState<Partial<UserProfile>>({
@@ -117,17 +119,20 @@ const SmartOnboarding: React.FC<SmartOnboardingProps> = ({ onComplete }) => {
     }
   };
 
-  const handleEmailAuth = async (e: React.FormEvent) => {
+  const handleCredentialsAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsProcessing(true);
     setError(null);
     try {
       let user;
-      if (emailMode === 'signup') {
-        const result = await createUserWithEmailAndPassword(auth, email, password);
+      // We use a dummy email domain to satisfy Firebase Auth while allowing username-only login
+      const dummyEmail = `${username.trim().toLowerCase()}@wanzcorp.local`;
+      
+      if (authMode === 'signup') {
+        const result = await createUserWithEmailAndPassword(auth, dummyEmail, password);
         user = result.user;
       } else {
-        const result = await signInWithEmailAndPassword(auth, email, password);
+        const result = await signInWithEmailAndPassword(auth, dummyEmail, password);
         user = result.user;
       }
 
@@ -141,28 +146,29 @@ const SmartOnboarding: React.FC<SmartOnboardingProps> = ({ onComplete }) => {
         setProfile(prev => ({
           ...prev,
           uid: user.uid,
-          email: user.email || '',
-          name: email.split('@')[0], // Default name from email
+          email: dummyEmail,
+          username: username.trim().toLowerCase(),
+          name: fullName || username, // Use provided name or username
         }));
         setStep(1);
       }
     } catch (e: any) {
-      console.error("Email Auth Error:", e);
+      console.error("Auth Error:", e);
       let message = "Une erreur est survenue. Réessaie.";
       
       if (e.code === 'auth/email-already-in-use') {
-        message = "Cet email est déjà utilisé. Connecte-toi plutôt !";
-        setEmailMode('login');
+        message = "Ce nom d'utilisateur est déjà pris. Connecte-toi !";
+        setAuthMode('login');
       } else if (e.code === 'auth/invalid-email') {
-        message = "L'adresse email n'est pas valide.";
+        message = "Le nom d'utilisateur contient des caractères non autorisés.";
       } else if (e.code === 'auth/weak-password') {
         message = "Le mot de passe est trop court (min. 6 caractères).";
       } else if (e.code === 'auth/user-not-found') {
-        message = "Aucun compte trouvé avec cet email.";
+        message = "Aucun compte trouvé avec ce nom d'utilisateur.";
       } else if (e.code === 'auth/wrong-password') {
         message = "Mot de passe incorrect.";
       } else if (e.code === 'auth/invalid-credential') {
-        message = "Email ou mot de passe incorrect.";
+        message = "Nom d'utilisateur ou mot de passe incorrect.";
       }
       
       setError(message);
@@ -279,19 +285,19 @@ const SmartOnboarding: React.FC<SmartOnboardingProps> = ({ onComplete }) => {
                     </button>
 
                     <button 
-                      onClick={() => setAuthMethod('email')}
+                      onClick={() => setAuthMethod('credentials')}
                       className="w-full py-6 bg-white/5 border border-white/10 text-white font-black rounded-[2rem] hover:bg-white/10 transition-all flex items-center justify-center space-x-4"
                     >
-                      <Mail size={20} />
-                      <span>Utiliser un Email</span>
+                      <User size={20} />
+                      <span>Utiliser un Identifiant</span>
                     </button>
                   </div>
                 </motion.div>
               )}
 
-              {authMethod === 'email' && (
+              {authMethod === 'credentials' && (
                 <motion.div 
-                  key="email"
+                  key="credentials"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
@@ -307,23 +313,40 @@ const SmartOnboarding: React.FC<SmartOnboardingProps> = ({ onComplete }) => {
 
                   <div className="space-y-4">
                     <h2 className="text-4xl font-black text-white tracking-tighter">
-                      {emailMode === 'signup' ? 'Créer un compte' : 'Se connecter'}
+                      {authMode === 'signup' ? 'Créer un compte' : 'Se connecter'}
                     </h2>
                     <p className="text-gray-400 text-sm">Saisis tes informations pour continuer.</p>
                   </div>
 
-                  <form onSubmit={handleEmailAuth} className="space-y-4 text-left">
+                  <form onSubmit={handleCredentialsAuth} className="space-y-4 text-left">
+                    {authMode === 'signup' && (
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-4">Nom Complet</label>
+                        <div className="relative">
+                          <User className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-500" size={18} />
+                          <input 
+                            type="text"
+                            required
+                            value={fullName}
+                            onChange={(e) => setFullName(e.target.value)}
+                            className="w-full bg-white/5 border border-white/10 rounded-[1.5rem] py-4 pl-14 pr-6 text-white focus:border-brand-accent outline-none transition-all"
+                            placeholder="Jean Dupont"
+                          />
+                        </div>
+                      </div>
+                    )}
+
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-4">Email</label>
+                      <label className="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-4">Nom d'utilisateur</label>
                       <div className="relative">
                         <Mail className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-500" size={18} />
                         <input 
-                          type="email"
+                          type="text"
                           required
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
+                          value={username}
+                          onChange={(e) => setUsername(e.target.value)}
                           className="w-full bg-white/5 border border-white/10 rounded-[1.5rem] py-4 pl-14 pr-6 text-white focus:border-brand-accent outline-none transition-all"
-                          placeholder="votre@email.com"
+                          placeholder="identifiant"
                         />
                       </div>
                     </div>
@@ -355,16 +378,16 @@ const SmartOnboarding: React.FC<SmartOnboardingProps> = ({ onComplete }) => {
                       {isProcessing ? (
                         <Loader2 className="animate-spin" />
                       ) : (
-                        <span>{emailMode === 'signup' ? 'Créer mon compte' : 'Se connecter'}</span>
+                        <span>{authMode === 'signup' ? 'Créer mon compte' : 'Se connecter'}</span>
                       )}
                     </button>
 
                     <button 
                       type="button"
-                      onClick={() => setEmailMode(emailMode === 'signup' ? 'login' : 'signup')}
+                      onClick={() => setAuthMode(authMode === 'signup' ? 'login' : 'signup')}
                       className="w-full py-4 text-gray-500 hover:text-white transition-colors text-xs font-bold"
                     >
-                      {emailMode === 'signup' ? 'Déjà un compte ? Se connecter' : 'Pas de compte ? Créer un compte'}
+                      {authMode === 'signup' ? 'Déjà un compte ? Se connecter' : 'Pas de compte ? Créer un compte'}
                     </button>
                   </form>
                 </motion.div>
@@ -401,8 +424,12 @@ const SmartOnboarding: React.FC<SmartOnboardingProps> = ({ onComplete }) => {
                 <Camera size={18} />
               </button>
             </div>
-            <h2 className="text-4xl font-black text-white tracking-tight">Quel est ton nom ?</h2>
-            <p className="text-gray-500">Utilise ton vrai nom pour que tes amis te reconnaissent.</p>
+            <h2 className="text-4xl font-black text-white tracking-tight">
+              {profile.name ? `Ravi de te voir, ${profile.name.split(' ')[0]} !` : 'Quel est ton nom ?'}
+            </h2>
+            <p className="text-gray-500">
+              {profile.name ? 'Vérifie ton nom ou change-le si tu veux.' : 'Utilise ton vrai nom pour que tes amis te reconnaissent.'}
+            </p>
             <input 
               type="text"
               autoFocus
