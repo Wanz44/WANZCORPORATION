@@ -54,6 +54,30 @@
       },
       "required": ["projectId", "name", "url", "uploadedAt"]
     },
+    "Conversation": {
+      "title": "Conversation",
+      "description": "A chat conversation between two or more users",
+      "type": "object",
+      "properties": {
+        "participants": { "type": "array", "items": { "type": "string" }, "description": "List of participant UIDs" },
+        "lastMessage": { "type": "string", "description": "The text of the last message" },
+        "lastMessageAt": { "type": "string", "format": "date-time", "description": "Timestamp of the last message" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Timestamp of the last update" }
+      },
+      "required": ["participants", "updatedAt"]
+    },
+    "Message": {
+      "title": "Message",
+      "description": "A single message in a conversation",
+      "type": "object",
+      "properties": {
+        "conversationId": { "type": "string", "description": "ID of the parent conversation" },
+        "senderId": { "type": "string", "description": "UID of the sender" },
+        "text": { "type": "string", "description": "The message text" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Timestamp of creation" }
+      },
+      "required": ["conversationId", "senderId", "text", "createdAt"]
+    },
     "UserProfile": {
       "title": "UserProfile",
       "description": "User profile with personalized tags and info",
@@ -101,6 +125,14 @@
     "/projects/{projectId}/files/{fileId}": {
       "schema": "ProjectFile",
       "description": "Files shared within a project"
+    },
+    "/conversations/{conversationId}": {
+      "schema": "Conversation",
+      "description": "Chat conversations"
+    },
+    "/conversations/{conversationId}/messages/{messageId}": {
+      "schema": "Message",
+      "description": "Messages within a conversation"
     }
   }
 }

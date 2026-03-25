@@ -71,7 +71,14 @@ const WomenEmpowermentSuite: React.FC = () => {
         contents: `En tant qu'expert en nutrition maternelle en Afrique Centrale, suggère des repas basés sur des produits locaux (marché de Kinshasa) pour : "${nutritionQuery}". Concentre-toi sur le fer et les vitamines.`,
       });
       setNutritionResponse(result.text);
-    } catch (e) { console.error(e); }
+    } catch (e: any) { 
+      console.error("Nutrition AI Error:", e);
+      if (e.status === "RESOURCE_EXHAUSTED" || e.code === 429) {
+        setNutritionResponse("Désolé, le service de nutrition est saturé (quota dépassé). Veuillez réessayer plus tard.");
+      } else {
+        setNutritionResponse("Une erreur est survenue lors de la génération des conseils.");
+      }
+    }
   };
 
   // --- Logic: Legal (AI) ---
@@ -85,7 +92,14 @@ const WomenEmpowermentSuite: React.FC = () => {
         contents: `Explique simplement les droits des femmes en RDC concernant : "${legalQuery}". Utilise un langage clair, accessible et bienveillant.`,
       });
       setLegalResponse(result.text);
-    } catch (e) { console.error(e); }
+    } catch (e: any) { 
+      console.error("Legal AI Error:", e);
+      if (e.status === "RESOURCE_EXHAUSTED" || e.code === 429) {
+        setLegalResponse("Désolé, l'assistant juridique est saturé (quota dépassé). Veuillez réessayer plus tard.");
+      } else {
+        setLegalResponse("Une erreur est survenue lors de l'explication des droits.");
+      }
+    }
   };
 
   const tabs = [

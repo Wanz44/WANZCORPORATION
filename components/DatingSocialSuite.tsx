@@ -56,7 +56,14 @@ const DatingSocialSuite: React.FC = () => {
         contents: `En tant que coach en séduction bienveillant, analyse ce message d'approche : "${chatInput}". Donne des conseils constructifs sur le ton, l'intérêt et comment l'améliorer.`,
       });
       setCoachFeedback(result.text);
-    } catch (e) { console.error(e); }
+    } catch (e: any) { 
+      console.error("Coach AI Error:", e);
+      if (e.status === "RESOURCE_EXHAUSTED" || e.code === 429) {
+        setCoachFeedback("Désolé, le coach IA est actuellement très sollicité (quota dépassé). Veuillez réessayer dans quelques instants.");
+      } else {
+        setCoachFeedback("Une erreur est survenue lors de l'analyse de votre message.");
+      }
+    }
     finally { setIsProcessing(false); }
   };
 

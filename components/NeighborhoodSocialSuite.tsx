@@ -57,7 +57,14 @@ const NeighborhoodSocialSuite: React.FC = () => {
         contents: "Génère un profil d'ami idéal pour un utilisateur vivant à Kinshasa (Lemba), passionné de Tech et de Foot. Inclus un score de compatibilité, les points communs et un icebreaker personnalisé.",
       });
       setAiMatch(result.text);
-    } catch (e) { console.error(e); }
+    } catch (e: any) { 
+      console.error("AI Match Error:", e);
+      if (e.status === "RESOURCE_EXHAUSTED" || e.code === 429) {
+        setAiMatch("Désolé, le service de mise en relation est saturé (quota dépassé). Veuillez réessayer plus tard.");
+      } else {
+        setAiMatch("Une erreur est survenue lors de la recherche de compatibilité.");
+      }
+    }
     finally { setIsProcessing(false); }
   };
 

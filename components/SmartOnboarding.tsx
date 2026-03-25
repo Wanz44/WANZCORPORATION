@@ -203,11 +203,23 @@ const SmartOnboarding: React.FC<SmartOnboardingProps> = ({ onComplete }) => {
       setTimeout(() => {
         onComplete(finalProfile);
       }, 3000);
-    } catch (e) {
-      console.error(e);
-      // Fallback tags
-      const finalProfile = { ...profile, tags: ['#Innovation', '#Kinshasa', '#Tech'] } as UserProfile;
-      onComplete(finalProfile);
+    } catch (e: any) {
+      console.error("AI Analysis Error:", e);
+      // Fallback tags if AI fails (e.g. quota exceeded)
+      const fallbackTags = ['#Innovation', '#Kinshasa', '#Tech', '#Pro', '#Social'];
+      const finalProfile = { ...profile, tags: fallbackTags } as UserProfile;
+      
+      // Save to Firestore even if AI fails
+      if (finalProfile.uid) {
+        await setDoc(doc(db, 'users', finalProfile.uid), finalProfile);
+      }
+
+      setProfile(finalProfile);
+      setStep(7);
+      
+      setTimeout(() => {
+        onComplete(finalProfile);
+      }, 3000);
     } finally {
       setIsProcessing(false);
     }

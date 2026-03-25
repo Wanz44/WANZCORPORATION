@@ -74,8 +74,13 @@ const ResearchSuite: React.FC = () => {
         contents: `En tant qu'expert en méthodologie de recherche, aide-moi à affiner cette problématique de TFC : "${problemInput}". Propose une question centrale, des hypothèses et un plan de recherche.`,
       });
       setProblemResponse(result.text || "Erreur de génération.");
-    } catch (e) {
-      console.error(e);
+    } catch (e: any) {
+      console.error("Problem Assistant Error:", e);
+      if (e.status === "RESOURCE_EXHAUSTED" || e.code === 429) {
+        setProblemResponse("Désolé, l'assistant de problématique est saturé (quota dépassé). Veuillez réessayer plus tard.");
+      } else {
+        setProblemResponse("Une erreur est survenue lors de la génération de la structure.");
+      }
     } finally {
       setIsProblemLoading(false);
     }
@@ -96,8 +101,13 @@ const ResearchSuite: React.FC = () => {
       setParaphraseResult(text);
       // Mock plagiarism score extraction or random for demo
       setPlagiarismScore(Math.floor(Math.random() * 15)); 
-    } catch (e) {
-      console.error(e);
+    } catch (e: any) {
+      console.error("Paraphrase Error:", e);
+      if (e.status === "RESOURCE_EXHAUSTED" || e.code === 429) {
+        setParaphraseResult("Service de reformulation indisponible (quota dépassé).");
+      } else {
+        setParaphraseResult("Une erreur est survenue lors de la reformulation.");
+      }
     } finally {
       setIsParaphraseLoading(false);
     }

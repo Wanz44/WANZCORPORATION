@@ -45,9 +45,13 @@ const KnowledgeEngine: React.FC = () => {
         setResponse(text);
         setHistory(prev => [{ query, response: text }, ...prev].slice(0, 5));
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Knowledge Engine Error:", error);
-      setResponse("Désolé, une erreur est survenue lors de la consultation du moteur de connaissance.");
+      if (error.status === "RESOURCE_EXHAUSTED" || error.code === 429) {
+        setResponse("Désolé, le moteur de connaissance est actuellement saturé (quota dépassé). Veuillez réessayer dans quelques instants.");
+      } else {
+        setResponse("Désolé, une erreur est survenue lors de la consultation du moteur de connaissance.");
+      }
     } finally {
       setIsLoading(false);
     }

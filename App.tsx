@@ -3,15 +3,22 @@ import { motion, AnimatePresence } from 'motion/react';
 import { 
   X,
   Search as SearchIcon,
+  Settings,
+  HelpCircle
 } from 'lucide-react';
 import SmartOnboarding from './components/SmartOnboarding';
 import SmartFeed from './components/SmartFeed';
+import ChatSystem from './components/ChatSystem';
+import VideoFeed from './components/VideoFeed';
+import Marketplace from './components/Marketplace';
+import ProfileView from './components/ProfileView';
 import { auth, db } from './firebase';
 import { onAuthStateChanged } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 // UI Components
 import Navbar from './components/ui/Navbar';
+import Sidebar from './components/ui/Sidebar';
 import Footer from './components/ui/Footer';
 import FeedbackSystem from './components/ui/FeedbackSystem';
 
@@ -54,7 +61,11 @@ const App: React.FC = () => {
   const [pendingWhatsAppUrl, setPendingWhatsAppUrl] = useState<string | null>(null);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [userProfile, setUserProfile] = useState<any>(null);
-  const [viewMode, setViewMode] = useState<'landing' | 'feed' | 'tools'>('landing');
+  const [viewMode, setViewMode] = useState<'landing' | 'feed' | 'tools' | 'video' | 'marketplace' | 'profile' | 'settings' | 'support'>('landing');
+  const [feedSubTab, setFeedSubTab] = useState<'home' | 'friends'>('home');
+  const [activeTab, setActiveTab] = useState<'city' | 'pro' | 'life' | 'friends'>('city');
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -93,6 +104,28 @@ const App: React.FC = () => {
     setViewMode('feed');
   };
 
+  const handleUpdateProfile = async (updated: any) => {
+    try {
+      if (auth.currentUser) {
+        await setDoc(doc(db, 'users', auth.currentUser.uid), updated);
+        setUserProfile(updated);
+      }
+    } catch (error) {
+      console.error("Error updating profile:", error);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await auth.signOut();
+      setUserProfile(null);
+      setViewMode('landing');
+      setIsSidebarOpen(false);
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
+  };
+
   const handleOrderConfirm = (plan: PricingPlan) => {
     const message = `Bonjour WANZCORP, je souhaite commander le ${plan.name} (${plan.price}).`;
     const url = `https://wa.me/243825555555?text=${encodeURIComponent(message)}`;
@@ -109,9 +142,42 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen selection:bg-brand-accent selection:text-brand-dark">
-      <Navbar userProfile={userProfile} onOnboardingTrigger={() => setShowOnboarding(true)} />
+      <Navbar 
+        userProfile={userProfile} 
+        onOnboardingTrigger={() => setShowOnboarding(true)} 
+        onOpenChat={() => setIsChatOpen(true)}
+        onOpenNotifications={() => {
+          if (viewMode === 'feed') {
+            window.dispatchEvent(new CustomEvent('open-notifications'));
+          } else {
+            setViewMode('feed');
+            setTimeout(() => window.dispatchEvent(new CustomEvent('open-notifications')), 100);
+          }
+        }}
+        onNavigate={(view, tab) => {
+          setViewMode(view as any);
+          if (tab) setActiveTab(tab as any);
+        }}
+        onOpenSidebar={() => setIsSidebarOpen(true)}
+      />
       
+      <Sidebar 
+        isOpen={isSidebarOpen} 
+        onClose={() => setIsSidebarOpen(false)} 
+        userProfile={userProfile} 
+        onLogout={handleLogout}
+        onViewChange={(view) => setViewMode(view as any)}
+      />
+
       {showOnboarding && <SmartOnboarding onComplete={handleOnboardingComplete} />}
+
+      {userProfile && (
+        <ChatSystem 
+          isOpen={isChatOpen} 
+          onClose={() => setIsChatOpen(false)} 
+          userProfile={userProfile} 
+        />
+      )}
 
       {/* Hero Section */}
       {viewMode === 'landing' && (
@@ -162,9 +228,9 @@ const App: React.FC = () => {
 
       {/* Social Feed Section */}
       {viewMode === 'feed' && userProfile && (
-        <section className="pt-48 pb-20">
+        <section className="pt-24 md:pt-48 pb-20">
           <div className="max-w-7xl mx-auto px-4">
-            <div className="flex items-center justify-between mb-12">
+            <div className="hidden md:flex items-center justify-between mb-12">
               <div className="flex items-center space-x-6">
                 <div className="w-20 h-20 bg-brand-accent/20 rounded-[2rem] flex items-center justify-center text-brand-accent border border-brand-accent/30 overflow-hidden">
                   {userProfile.avatar ? (
@@ -194,7 +260,116 @@ const App: React.FC = () => {
                 </button>
               </div>
             </div>
-            <SmartFeed userProfile={userProfile} />
+            <SmartFeed 
+              userProfile={userProfile} 
+              activeTab={activeTab}
+              onTabChange={setActiveTab}
+              feedSubTab={feedSubTab}
+              onFeedSubTabChange={setFeedSubTab}
+            />
+          </div>
+        </section>
+      )}
+
+      {/* Video Section */}
+      {viewMode === 'video' && userProfile && (
+        <section className="pt-20 md:pt-24 h-screen overflow-hidden">
+          <VideoFeed />
+        </section>
+      )}
+
+      {/* Marketplace Section */}
+      {viewMode === 'marketplace' && userProfile && (
+        <section className="pt-24 md:pt-32 pb-20">
+          <Marketplace />
+        </section>
+      )}
+
+      {/* Profile Section */}
+      {viewMode === 'profile' && userProfile && (
+        <section className="pt-24 md:pt-32 pb-20">
+          <ProfileView 
+            userProfile={userProfile} 
+            onUpdateProfile={handleUpdateProfile}
+          />
+        </section>
+      )}
+
+      {/* Settings Section */}
+      {viewMode === 'settings' && userProfile && (
+        <section className="pt-24 md:pt-32 pb-20">
+          <div className="max-w-3xl mx-auto px-4">
+            <div className="glass p-8 rounded-[3rem] border border-white/10">
+              <div className="flex items-center space-x-4 mb-8">
+                <div className="w-12 h-12 bg-brand-accent/20 rounded-2xl flex items-center justify-center text-brand-accent">
+                  <Settings size={24} />
+                </div>
+                <h2 className="text-3xl font-black text-white uppercase tracking-tighter">Paramètres</h2>
+              </div>
+              
+              <div className="space-y-6">
+                <div className="p-6 bg-white/5 rounded-2xl border border-white/5 flex items-center justify-between">
+                  <div>
+                    <h3 className="text-sm font-black text-white uppercase tracking-widest mb-1">Mode Sombre</h3>
+                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Activer le thème sombre</p>
+                  </div>
+                  <div className="w-12 h-6 bg-brand-accent rounded-full relative">
+                    <div className="absolute right-1 top-1 w-4 h-4 bg-brand-dark rounded-full"></div>
+                  </div>
+                </div>
+                
+                <div className="p-6 bg-white/5 rounded-2xl border border-white/5 flex items-center justify-between">
+                  <div>
+                    <h3 className="text-sm font-black text-white uppercase tracking-widest mb-1">Notifications</h3>
+                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Gérer les alertes push</p>
+                  </div>
+                  <button className="text-brand-accent text-[10px] font-black uppercase tracking-widest">Modifier</button>
+                </div>
+
+                <div className="p-6 bg-white/5 rounded-2xl border border-white/5 flex items-center justify-between">
+                  <div>
+                    <h3 className="text-sm font-black text-white uppercase tracking-widest mb-1">Confidentialité</h3>
+                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Qui peut voir votre profil</p>
+                  </div>
+                  <button className="text-brand-accent text-[10px] font-black uppercase tracking-widest">Gérer</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Support Section */}
+      {viewMode === 'support' && userProfile && (
+        <section className="pt-24 md:pt-32 pb-20">
+          <div className="max-w-3xl mx-auto px-4">
+            <div className="glass p-8 rounded-[3rem] border border-white/10">
+              <div className="flex items-center space-x-4 mb-8">
+                <div className="w-12 h-12 bg-brand-accent/20 rounded-2xl flex items-center justify-center text-brand-accent">
+                  <HelpCircle size={24} />
+                </div>
+                <h2 className="text-3xl font-black text-white uppercase tracking-tighter">Aide & Support</h2>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div className="p-6 bg-white/5 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors cursor-pointer">
+                  <h3 className="text-sm font-black text-white uppercase tracking-widest mb-2">Centre d'aide</h3>
+                  <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Trouvez des réponses à vos questions</p>
+                </div>
+                <div className="p-6 bg-white/5 rounded-2xl border border-white/5 hover:bg-white/10 transition-colors cursor-pointer">
+                  <h3 className="text-sm font-black text-white uppercase tracking-widest mb-2">Contactez-nous</h3>
+                  <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Support direct 24/7</p>
+                </div>
+              </div>
+
+              <div className="p-6 bg-brand-accent/10 rounded-2xl border border-brand-accent/20">
+                <h3 className="text-sm font-black text-brand-accent uppercase tracking-widest mb-2">Statut du système</h3>
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                  <span className="text-[10px] text-white font-bold uppercase tracking-widest">Tous les systèmes sont opérationnels</span>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
       )}
@@ -254,7 +429,7 @@ const App: React.FC = () => {
 
       {/* Tools Section */}
       {(viewMode === 'tools' || (viewMode === 'landing' && !activeTool)) && (
-        <section id="tools" className="py-32 bg-brand-dark/50">
+        <section id="tools" className="pt-24 md:pt-32 pb-32 bg-brand-dark/50">
           <div className="max-w-7xl mx-auto px-4">
             <div className="text-center mb-20">
               {viewMode === 'tools' && (

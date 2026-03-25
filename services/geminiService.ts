@@ -46,69 +46,104 @@ export const getGeminiPro = () => new GoogleGenAI({ apiKey: API_KEY });
 
 // 1. Intelligent Chat with Search Grounding
 export async function getIntelligentResponse(prompt: string) {
-  const ai = getGeminiPro();
-  const response = await ai.models.generateContent({
-    model: 'gemini-3-flash-preview',
-    contents: prompt,
-    config: {
-      tools: [{ googleSearch: {} }],
-      systemInstruction: "Tu es l'assistant intelligent de WANZCORP. Ton rôle est de conseiller les clients sur les technologies informatiques, le développement web/mobile et les services de WANZCORP. Utilise Google Search pour des infos à jour.",
-    },
-  });
-  return {
-    text: response.text || "Je n'ai pas pu générer de réponse.",
-    grounding: response.candidates?.[0]?.groundingMetadata?.groundingChunks?.map((chunk: any) => ({
-      title: chunk.web?.title,
-      uri: chunk.web?.uri
-    })).filter((c: any) => c.title && c.uri) || []
-  };
+  try {
+    const ai = getGeminiPro();
+    const response = await ai.models.generateContent({
+      model: 'gemini-3-flash-preview',
+      contents: prompt,
+      config: {
+        tools: [{ googleSearch: {} }],
+        systemInstruction: "Tu es l'assistant intelligent de WANZCORP. Ton rôle est de conseiller les clients sur les technologies informatiques, le développement web/mobile et les services de WANZCORP. Utilise Google Search pour des infos à jour.",
+      },
+    });
+    return {
+      text: response.text || "Je n'ai pas pu générer de réponse.",
+      grounding: response.candidates?.[0]?.groundingMetadata?.groundingChunks?.map((chunk: any) => ({
+        title: chunk.web?.title,
+        uri: chunk.web?.uri
+      })).filter((c: any) => c.title && c.uri) || []
+    };
+  } catch (error: any) {
+    console.error("Gemini Service Error:", error);
+    if (error.status === "RESOURCE_EXHAUSTED" || error.code === 429) {
+      return {
+        text: "Désolé, notre service d'IA est actuellement très sollicité (quota dépassé). Veuillez réessayer dans quelques instants.",
+        grounding: []
+      };
+    }
+    return {
+      text: "Une erreur est survenue lors de la génération de la réponse.",
+      grounding: []
+    };
+  }
 }
 
 // 2. Image Analysis
 export async function analyzeImage(base64Image: string, prompt: string) {
-  const ai = getGeminiPro();
-  const response = await ai.models.generateContent({
-    model: 'gemini-3-pro-preview',
-    contents: {
-      parts: [
-        { inlineData: { data: base64Image.split(',')[1], mimeType: 'image/jpeg' } },
-        { text: prompt }
-      ]
-    },
-    config: {
-      systemInstruction: "Analyse cette image ou capture d'écran pour donner des conseils techniques pertinents dans le contexte de WANZCORP."
+  try {
+    const ai = getGeminiPro();
+    const response = await ai.models.generateContent({
+      model: 'gemini-3-pro-preview',
+      contents: {
+        parts: [
+          { inlineData: { data: base64Image.split(',')[1], mimeType: 'image/jpeg' } },
+          { text: prompt }
+        ]
+      },
+      config: {
+        systemInstruction: "Analyse cette image ou capture d'écran pour donner des conseils techniques pertinents dans le contexte de WANZCORP."
+      }
+    });
+    return response.text;
+  } catch (error: any) {
+    console.error("Image Analysis Error:", error);
+    if (error.status === "RESOURCE_EXHAUSTED" || error.code === 429) {
+      return "Le service d'analyse d'image est temporairement indisponible (quota dépassé).";
     }
-  });
-  return response.text;
+    return "Erreur lors de l'analyse de l'image.";
+  }
 }
 
 // 3. Fast Response (Flash Lite)
 export async function getQuickAdvice(prompt: string) {
-  const ai = getGeminiPro();
-  const response = await ai.models.generateContent({
-    model: 'gemini-2.5-flash-lite-latest',
-    contents: prompt,
-    config: {
-      systemInstruction: "Donne une réponse très courte et technique."
+  try {
+    const ai = getGeminiPro();
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash-lite-latest',
+      contents: prompt,
+      config: {
+        systemInstruction: "Donne une réponse très courte et technique."
+      }
+    });
+    return response.text;
+  } catch (error: any) {
+    console.error("Quick Advice Error:", error);
+    if (error.status === "RESOURCE_EXHAUSTED" || error.code === 429) {
+      return "Service indisponible (quota dépassé).";
     }
-  });
-  return response.text;
+    return "Erreur de service.";
+  }
 }
 
 // 4. TTS
 export async function generateSpeech(text: string, voice: string = 'Kore') {
-  const ai = getGeminiPro();
-  const response = await ai.models.generateContent({
-    model: "gemini-2.5-flash-preview-tts",
-    contents: [{ parts: [{ text }] }],
-    config: {
-      responseModalities: [Modality.AUDIO],
-      speechConfig: {
-        voiceConfig: {
-          prebuiltVoiceConfig: { voiceName: voice },
+  try {
+    const ai = getGeminiPro();
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash-preview-tts",
+      contents: [{ parts: [{ text }] }],
+      config: {
+        responseModalities: [Modality.AUDIO],
+        speechConfig: {
+          voiceConfig: {
+            prebuiltVoiceConfig: { voiceName: voice },
+          },
         },
       },
-    },
-  });
-  return response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+    });
+    return response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+  } catch (error: any) {
+    console.error("Speech Generation Error:", error);
+    return null;
+  }
 }
